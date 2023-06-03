@@ -1,3 +1,3 @@
-SUBNET="169.25"
-EDGE_IP="169.254.192.215"
+SUBNET="20.0.0.0"
+EDGE_IP="20.0.0.1"
 DHCPserverAddress="/pi"
