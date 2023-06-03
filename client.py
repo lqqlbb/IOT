@@ -65,7 +65,7 @@ class Mqtt_Publisher:
     '''
         mqtt
     '''
-    def __init__(self,node_name,central_ip='3.144.252.214',port=1883,anonymous=True,timeout=60):
+    def __init__(self,node_name,central_ip='3.16.135.152',port=1883,anonymous=True,timeout=60):
         '''
         :param central_ip: Broker address
         :param port:  port number
