@@ -176,8 +176,6 @@ if __name__ =="__main__":
     s=Mqtt_Subscriber(str(id),id)
     while not s.connected:
         pass
-    while True:
-        time.sleep(1)
     pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
     pubThread.start()
     
