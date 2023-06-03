@@ -158,12 +158,12 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
 
 
 if __name__ =="__main__":
-     args = sys.argv
-     ip,id=getDHCPip()
-     print("IP:",ip,"\n","ID:",id,"\n")
-     if (len(args) != "end"):
+    args = sys.argv
+    ip,id=getDHCPip()
+    print("IP:",ip,"\n","ID:",id,"\n")
+    if (len(args) != "end"):
          makeBridge(ip,EDGE_IP)
-     os.system("sudo ip add default via "+EDGE_IP)
+    os.system("sudo ip add default via "+EDGE_IP)
     p=Mqtt_Publisher(id)
     while not p.connected:
         pass
