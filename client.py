@@ -159,6 +159,7 @@ def publish(topic:str,message:str):
     while True:
         try:
                 p.Publish(topic,message)
+                time.sleep(2)
         except:
                 print("fail to publish "+message+" to "+topic)
 
@@ -176,8 +177,10 @@ if __name__ =="__main__":
     s=Mqtt_Subscriber(str(id),id)
     while not s.connected:
         pass
-    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
-    pubThread.start()
+    while True:
+       time.sleep(1)
+#    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+#    pubThread.start()
     
     
 
