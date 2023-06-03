@@ -168,7 +168,9 @@ if __name__ =="__main__":
     p=Mqtt_Publisher(id)
     while not p.connected:
         pass
-    p.Publish(str(id),'this is test')
+    while True:
+        time.sleep(1)
+        p.Publish(str(id),'this is test')
     s=Mqtt_Subscriber(str(id),id)
     while not s.connected:
         pass
