@@ -163,6 +163,7 @@ if __name__ =="__main__":
     print("IP:",ip,"\n","ID:",id,"\n")
     if (len(args) != "end"):
          makeBridge(ip,EDGE_IP)
+    time.sleep(2)
     os.system("sudo ip add default via "+EDGE_IP)
     p=Mqtt_Publisher(id)
     while not p.connected:
