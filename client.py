@@ -10,7 +10,7 @@ class Mqtt_Subscriber:
     '''
         mqtt消息通讯接口
     '''
-    def __init__(self,topic_name,node_name,central_ip='3.144.252.214',port=1883,
+    def __init__(self,topic_name,node_name,central_ip='3.16.135.152',port=1883,
                  callback_func=None,anonymous=True,timeout=60):
         '''
             :param central_ip: Broker address
