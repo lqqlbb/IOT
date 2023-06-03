@@ -155,7 +155,12 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     os.system("sudo ip addr flush dev eth0")
     os.system("sudo ip route add "+edgeIp+" via "+ip+" dev br0")
     print("bridge made")
-
+def publish(topic:str,message:str):
+    while True:
+        try:
+                p.Publish(topic,message)
+        except:
+                print("fail to publish "+message+" to "+topic)
 
 if __name__ =="__main__":
     args = sys.argv
@@ -168,14 +173,16 @@ if __name__ =="__main__":
     p=Mqtt_Publisher(id)
     while not p.connected:
         pass
-    while True:
-        time.sleep(1)
-        p.Publish(str(id),'this is test')
     s=Mqtt_Subscriber(str(id),id)
     while not s.connected:
         pass
     while True:
         time.sleep(1)
+    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+    pubThread.start()
+    
+    
+
 
 
     
