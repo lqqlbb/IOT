@@ -6,66 +6,11 @@ import paho.mqtt.client as mqtt
 import threading
 import random
 from constants import*
-class Mqtt_Subscriber:
-    '''
-        mqtt消息通讯接口
-    '''
-    def __init__(self,topic_name,node_name,central_ip='3.16.135.152',port=1883,
-                 callback_func=None,anonymous=True,timeout=60):
-        '''
-            :param central_ip: Broker address
-            :param port:  port number
-            :param topic_name: subscript topic 
-            :param callback_func: call back function
-            :param timeout:  connection delay
-            :param node_name: node name
-            :param anonymous: if allow multi-nodes
-        '''
-        self.topic=topic_name
-        self.callback=callback_func
-        self.broker_ip=central_ip
-        self.broker_port=port
-        self.timeout=timeout
-        self.connected=False
-        self.node_name="node"+str(node_name)
-        if anonymous:
-            self.node_name=self.node_name
-        self.Start()
-    def Start(self):
-        '''
-        publisher
-        :return:
-        '''
-        self.client = mqtt.Client(self.node_name)     #set up client
-        self.client.on_connect = self.on_connect  # callback function
-        self.client.on_message=self.default_on_message
-        self.client.connect(self.broker_ip, self.broker_port, self.timeout)     #start to connect
-        self.client.subscribe(self.topic)
-        self.client.loop_start()    #start a thread 
-
-    '''
-                callback function
-    '''
-    def default_on_message(self,client, userdata, msg):
-        '''
-            default callback function
-        '''
-        print(msg.payload.decode('utf-8'))
-
-    def on_connect(self,client, userdata, flags, rc):
-        '''
-            connetion broker callback
-        '''
-        if rc==0:
-            self.connected=True
-
-        else:
-            raise Exception("Failed to connect mqtt server with code"+str(rc))
-class Mqtt_Publisher:
+class Mqtt:
     '''
         mqtt
     '''
-    def __init__(self,node_name,central_ip='3.16.135.152',port=1883,anonymous=True,timeout=60):
+    def __init__(self,sub_topic,node_name,central_ip='3.16.135.152',port=1883,anonymous=True,timeout=60):
         '''
         :param central_ip: Broker address
         :param port:  port number
@@ -73,6 +18,7 @@ class Mqtt_Publisher:
         :param node_name: name of node
         :param anonymous: if allow multi-ports
         '''
+        self.topic=sub_topic
         self.broker_ip=central_ip
         self.broker_port=port
         self.timeout=timeout
@@ -80,7 +26,7 @@ class Mqtt_Publisher:
         self.node_name="node"+str(node_name)
         if anonymous:
             self.node_name=self.node_name
-        self.Start()
+        
     def Start(self):
         '''
         start publisher
@@ -88,7 +34,9 @@ class Mqtt_Publisher:
         '''
         self.client = mqtt.Client(self.node_name)     #set up client
         self.client.on_connect = self.on_connect  # call back function
+        self.client.on_message=self.default_on_message
         self.client.connect(self.broker_ip, self.broker_port, self.timeout)     #start to connect
+        self.client.subscribe(self.topic)
         self.client.loop_start()    #start a thread 
     def Publish(self,topic,payload,qos=0,retain=False):
         '''
@@ -116,6 +64,12 @@ class Mqtt_Publisher:
 
         else:
             raise Exception("Failed to connect mqtt server with code"+str(rc))
+    def default_on_message(self,client, userdata, msg):
+        '''
+            default callback function
+        '''
+        print(msg.payload.decode('utf-8'))
+  
 def isInSubnet(ip:str,subnet:str) -> bool:
     # print(ip)
     if(ip[0:6]==subnet[0:6]):
@@ -162,7 +116,9 @@ def publish(topic:str,message:str):
                 time.sleep(2)
         except:
                 print("fail to publish "+message+" to "+topic)
-
+def subscribe(topic:str):
+    while True:
+        p.Subscribe(topic)
 if __name__ =="__main__":
     args = sys.argv
     ip,id=getDHCPip()
@@ -171,17 +127,15 @@ if __name__ =="__main__":
          makeBridge(ip,EDGE_IP)
     time.sleep(2)
     os.system("sudo ip route add default via "+EDGE_IP)
-    p=Mqtt_Publisher(id)
-    while not p.connected:
-        pass
-    s=Mqtt_Subscriber(str(id),id)
-    while not s.connected:
-        pass
+    p=Mqtt(str(id),id)
+    p.Start()
+    time.sleep(5)
+    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+    pubThread.start()
+
     while True:
-       time.sleep(1)
-#    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
-#    pubThread.start()
-    
+        pass
+
     
 
 
