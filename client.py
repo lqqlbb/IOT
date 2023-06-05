@@ -134,12 +134,12 @@ def setRoute():
                     columns = line.split()
                     gateway = columns[1]
 #                    print(gateway)
-            if (gateway == EDGE_IP)&(pingResult.returncode == 0):
-                print("Route set up")
+                if (gateway == EDGE_IP)&(pingResult.returncode == 0):
+                    print("Route set up")
                 
-                return
-            else:
-                print("Fail to set route, try again")
+                    return
+                else:
+                    print("Fail to set route, try again")
                 
         
 if __name__ =="__main__":
