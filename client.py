@@ -119,6 +119,18 @@ def publish(topic:str,message:str):
 def subscribe(topic:str):
     while True:
         p.Subscribe(topic)
+def setRoute()
+    while True:
+            os.system("sudo ip route add default via "+EDGE_IP)
+            result = subprocess.run(['ping', '-c', '1', “8.8.8.8”], capture_output=True)
+    
+            if result.returncode == 0:
+                print("Route set up")
+                break
+            else:
+                print("Fail to set route, try again")
+                time.sleep(2)
+        
 if __name__ =="__main__":
     args = sys.argv
     
@@ -127,8 +139,8 @@ if __name__ =="__main__":
     if (args[1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
-    os.system("sudo ip route add default via "+EDGE_IP)
-    print("Route set up")
+    
+    setRoute()
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
