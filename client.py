@@ -121,8 +121,9 @@ def subscribe(topic:str):
         p.Subscribe(topic)
 def setRoute():
     while True:
-            for i in range(5):
-                os.system("sudo ip route add default via "+EDGE_IP)
+            
+            os.system("sudo ip route add default via "+EDGE_IP)
+            time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
             output_lines = routeResult.stdout.split('\n')
@@ -136,7 +137,7 @@ def setRoute():
                 return
             else:
                 print("Fail to set route, try again")
-                time.sleep(2)
+                
         
 if __name__ =="__main__":
     args = sys.argv
@@ -148,11 +149,11 @@ if __name__ =="__main__":
          time.sleep(2)
 
     setRoute()
-#    p=Mqtt(str(id),id)
-#    p.Start()
-#    time.sleep(5)
-#    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
-#    pubThread.start()
+    p=Mqtt(str(id),id)
+    p.Start()
+    time.sleep(5)
+    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+    pubThread.start()
 
     while True:
         pass
