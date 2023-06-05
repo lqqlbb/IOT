@@ -130,7 +130,7 @@ def setRoute():
                     columns = line.split()
                     gateway = columns[1]
 #                    print(gateway)
-            if (gateway == EDGE_IP)&(result.returncode == 0):
+            if (gateway == EDGE_IP)&(pingResult.returncode == 0):
                 print("Route set up")
                 break
             else:
