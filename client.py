@@ -138,15 +138,15 @@ def setRoute():
                 time.sleep(2)
         
 if __name__ =="__main__":
-    args = sys.argv
-    
-    ip,id=getDHCPip()
-    print("IP:",ip,"\n","ID:",id,"\n")
-    if (args[1] != "end"):
-         makeBridge(ip,EDGE_IP)
-         time.sleep(2)
-    
-    setRoute()
+#    args = sys.argv
+#    
+#    ip,id=getDHCPip()
+#    print("IP:",ip,"\n","ID:",id,"\n")
+#    if (args[1] != "end"):
+#         makeBridge(ip,EDGE_IP)
+#         time.sleep(2)
+#    
+#    setRoute()
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
