@@ -121,7 +121,7 @@ def subscribe(topic:str):
         p.Subscribe(topic)
 def setRoute():
     while True:
-            os.system("sudo ip route add default via "+EDGE_IP)
+            os.system("sudo ip route replace default via "+EDGE_IP)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
             output_lines = routeResult.stdout.split('\n')
@@ -138,15 +138,15 @@ def setRoute():
                 time.sleep(2)
         
 if __name__ =="__main__":
-#    args = sys.argv
-#    
-#    ip,id=getDHCPip()
-#    print("IP:",ip,"\n","ID:",id,"\n")
-#    if (args[1] != "end"):
-#         makeBridge(ip,EDGE_IP)
-#         time.sleep(2)
-#    
-#    setRoute()
+    args = sys.argv
+
+    ip,id=getDHCPip()
+    print("IP:",ip,"\n","ID:",id,"\n")
+    if (args[1] != "end"):
+         makeBridge(ip,EDGE_IP)
+         time.sleep(2)
+
+    setRoute()
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
