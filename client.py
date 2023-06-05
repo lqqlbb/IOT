@@ -127,19 +127,20 @@ def setRoute():
             time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
-            print(routeResult)
+#            print(routeResult)
             output_lines = routeResult.stdout.split('\n')
-            for line in output_lines:
-                if line.startswith('0.0.0.0'):
-                    columns = line.split()
-                    gateway = columns[1]
+            
+            line=output_lines[2]
+            if line.startswith('0.0.0.0'):
+                columns = line.split()
+                gateway = columns[1]
 #                    print(gateway)
-                    if (gateway == EDGE_IP)&(pingResult.returncode == 0):
-                        print("Route set up")
-                
-                        return
-                    else:
-                        print("Fail to set route, try again")
+                if (gateway == EDGE_IP)&(pingResult.returncode == 0):
+                    print("Route set up")
+            
+                    return
+                else:
+                    print("Fail to set route, try again")
                 
         
 if __name__ =="__main__":
