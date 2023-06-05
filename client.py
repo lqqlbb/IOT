@@ -133,7 +133,7 @@ def setRoute():
 #                    print(gateway)
             if (gateway == EDGE_IP)&(pingResult.returncode == 0):
                 print("Route set up")
-                break
+                return
             else:
                 print("Fail to set route, try again")
                 time.sleep(2)
