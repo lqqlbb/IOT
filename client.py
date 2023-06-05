@@ -121,7 +121,8 @@ def subscribe(topic:str):
         p.Subscribe(topic)
 def setRoute():
     while True:
-            os.system("sudo ip route replace default via "+EDGE_IP)
+            for i in range(5):
+                os.system("sudo ip route replace default via "+EDGE_IP)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
             output_lines = routeResult.stdout.split('\n')
