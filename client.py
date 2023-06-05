@@ -123,7 +123,7 @@ if __name__ =="__main__":
     args = sys.argv
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
-    if (len(args) != "end"):
+    if (args != "end"):
          makeBridge(ip,EDGE_IP)
     time.sleep(2)
     os.system("sudo ip route add default via "+EDGE_IP)
