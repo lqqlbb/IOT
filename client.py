@@ -129,8 +129,8 @@ def setRoute():
                 if line.startswith('0.0.0.0'):
                     columns = line.split()
                     gateway = columns[1]
-                    print(gateway)
-            if (gateway == EDGE_I)&(result.returncode == 0):
+#                    print(gateway)
+            if (gateway == EDGE_IP)&(result.returncode == 0):
                 print("Route set up")
                 break
             else:
