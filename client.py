@@ -122,7 +122,7 @@ def subscribe(topic:str):
         p.Subscribe(topic)
 def setRoute():
     while True:
-            pdb.set_trace()
+#            pdb.set_trace()
             os.system("sudo ip route add default via "+EDGE_IP)
             time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
