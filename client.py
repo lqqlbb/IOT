@@ -119,7 +119,7 @@ def publish(topic:str,message:str):
 def subscribe(topic:str):
     while True:
         p.Subscribe(topic)
-def setRoute()
+def setRoute():
     while True:
             os.system("sudo ip route add default via "+EDGE_IP)
             result = subprocess.run(['ping', '-c', '1', “8.8.8.8”], capture_output=True)
