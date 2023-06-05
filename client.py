@@ -128,6 +128,7 @@ if __name__ =="__main__":
          makeBridge(ip,EDGE_IP)
     time.sleep(2)
     os.system("sudo ip route add default via "+EDGE_IP)
+    print("Route set up")
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
