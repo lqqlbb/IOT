@@ -147,11 +147,11 @@ if __name__ =="__main__":
          time.sleep(2)
 
     setRoute()
-    p=Mqtt(str(id),id)
-    p.Start()
-    time.sleep(5)
-    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
-    pubThread.start()
+#    p=Mqtt(str(id),id)
+#    p.Start()
+#    time.sleep(5)
+#    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+#    pubThread.start()
 
     while True:
         pass
