@@ -5,6 +5,7 @@ import sys
 import paho.mqtt.client as mqtt
 import threading
 import random
+import pdb
 from constants import*
 class Mqtt:
     '''
@@ -121,11 +122,12 @@ def subscribe(topic:str):
         p.Subscribe(topic)
 def setRoute():
     while True:
-            
+            pdb.set_trace()
             os.system("sudo ip route change default via "+EDGE_IP)
             time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
+            print(routeResult)
             output_lines = routeResult.stdout.split('\n')
             for line in output_lines:
                 if line.startswith('0.0.0.0'):
@@ -134,7 +136,7 @@ def setRoute():
 #                    print(gateway)
             if (gateway == EDGE_IP)&(pingResult.returncode == 0):
                 print("Route set up")
-                print(routeResult)
+                
                 return
             else:
                 print("Fail to set route, try again")
