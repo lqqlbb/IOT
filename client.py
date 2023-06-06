@@ -148,7 +148,7 @@ if __name__ =="__main__":
 
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
-    if (args[1] != "end"):
+    if (args[-1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
 
