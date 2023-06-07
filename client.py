@@ -107,7 +107,6 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     os.system("sudo brctl addif br0 eth1")
     os.system("sudo ifconfig br0 up")
     os.system("sudo ifconfig br0 "+ip)
-    os.system("sudo ip addr flush dev eth0")
     os.system("sudo ip route add "+edgeIp+" via "+ip+" dev br0")
     print("bridge made")
 def publish(topic:str,message:str):
@@ -148,6 +147,7 @@ if __name__ =="__main__":
 
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
+    os.system("sudo ip addr flush dev eth0")
     if (args[-1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
