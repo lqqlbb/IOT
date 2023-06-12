@@ -162,7 +162,7 @@ if __name__ =="__main__":
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
-    pubThread=threading.Thread(target=publish,args=(str(id),"/Users/lkr/Downloads/new/austin_weather.csv"))
+    pubThread=threading.Thread(target=publish,args=(str(id),"austin_weather.csv"))
     pubThread.start()
 
     while True:
