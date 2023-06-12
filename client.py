@@ -6,6 +6,7 @@ import paho.mqtt.client as mqtt
 import threading
 import random
 import pdb
+import pandas as pd
 from constants import*
 class Mqtt:
     '''
@@ -107,21 +108,26 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     os.system("sudo brctl addif br0 eth1")
     os.system("sudo ifconfig br0 up")
     os.system("sudo ifconfig br0 "+ip)
+    os.system("sudo ip addr flush dev eth0")
     os.system("sudo ip route add "+edgeIp+" via "+ip+" dev br0")
     print("bridge made")
-def publish(topic:str,message:str):
+def publish(topic:str,file:str):
+    df=pd.read_csv(file)
+    print(topic)
     while True:
         try:
-                p.Publish(topic,message)
-                time.sleep(2)
+                
+                for index, row in df.iterrows():
+#                    print(row.to_json())
+                    p.Publish(topic,row.to_json())
+                    time.sleep(2)
         except:
-                print("fail to publish "+message+" to "+topic)
-def subscribe(topic:str):
-    while True:
-        p.Subscribe(topic)
+                print("fail to publish "+file+" to "+topic)
+
 def setRoute():
     while True:
 #            pdb.set_trace()
+            os.system("sudo ip route del default via 0.0.0.0")
             os.system("sudo ip route add default via "+EDGE_IP)
             time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
@@ -147,16 +153,16 @@ if __name__ =="__main__":
 
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
-    os.system("sudo ip addr flush dev eth0")
     if (args[-1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
 
     setRoute()
+
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
-    pubThread=threading.Thread(target=publish,args=(str(id),"this is a test"))
+    pubThread=threading.Thread(target=publish,args=(str(id),"/Users/lkr/Downloads/new/austin_weather.csv"))
     pubThread.start()
 
     while True:
