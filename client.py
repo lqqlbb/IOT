@@ -12,7 +12,7 @@ class Mqtt:
     '''
         mqtt
     '''
-    def __init__(self,sub_topic,node_name,central_ip='3.16.135.152',port=1883,anonymous=True,timeout=60):
+    def __init__(self,sub_topic,node_name,central_ip='18.188.88.25',port=1883,anonymous=True,timeout=60):
         '''
         :param central_ip: Broker address
         :param port:  port number
@@ -158,7 +158,8 @@ if __name__ =="__main__":
          time.sleep(2)
 
     setRoute()
-
+    pdb.set_trace()
+    id=2
     p=Mqtt(str(id),id)
     p.Start()
     time.sleep(5)
