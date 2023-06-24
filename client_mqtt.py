@@ -1,0 +1,50 @@
+from mqtt import Mqtt
+import os
+import time
+import subprocess
+import sys
+import threading
+import random
+import pdb
+import json
+import pandas as pd
+class brokerMqtt(Mqtt):
+     def default_on_message(self,client, userdata, msg):
+          message=msg.payload.decode('utf-8')
+          message=json.loads(message)
+          time_interval=message['time']
+          data["TIME"]=time_interval
+          with open('constants.json', 'w') as file:
+            json.dump(data,file)
+def publish(client,topic:str,file:str):
+    df=pd.read_csv(file)
+    print(topic)
+    while True:
+        try:
+                
+                for index, row in df.iterrows():
+#                    print(row.to_json())
+                    client.Publish(topic,row.to_json())
+                    time.sleep(time_interval)
+        except:
+                print("fail to publish "+file+" to "+topic)
+if __name__ =="__main__":
+    
+    with open('constants.json', 'r') as file:
+        data = json.load(file)
+    BROKER_IP=data["BROKER_IP"]
+    id=data["ID"]
+    time_interval=data["TIME"]
+    p=Mqtt("down"+str(id),id,BROKER_IP,True)
+    p.Start()
+    time.sleep(5)
+    p.Publish(p,"nodes",json.dumps(
+         {
+"ID":id,
+"IP":data["IP"],
+"TOPIC":"node"+str(id),
+"TIME":time_interval,}))
+    pubThread=threading.Thread(target=publish,args=(p,"node"+str(id),"austin_weather.csv"))
+    pubThread.start()
+    while True:
+        pass
