@@ -33,9 +33,12 @@ class Mqtt:
         start publisher
         :return:
         '''
+        last_will_topic = "lastwill"
+        last_will_message = "Client"+self.node_name+ "disconnected"
         self.client = mqtt.Client(self.node_name)     #set up client
         self.client.on_connect = self.on_connect  # call back function
         self.client.on_message=self.default_on_message
+        self.client.will_set(last_will_topic, last_will_message, qos=1)
         self.client.connect(self.broker_ip, self.broker_port, self.timeout)     #start to connect
         self.client.subscribe(self.topic)
         self.client.loop_start()    #start a thread 
