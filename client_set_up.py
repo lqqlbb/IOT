@@ -80,7 +80,7 @@ if __name__ =="__main__":
     print("IP:",ip,"\n","ID:",id,"\n")
     data["ID"]=id
     data["IP"]=ip
-    data["TOPIC"]=str(id)
+    data["TOPIC"]="node"+str(id)
     with open('constants.json', 'w') as file:
         json.dump(data,file)
     if (args[-1] != "end"):

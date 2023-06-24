@@ -40,11 +40,11 @@ if __name__ =="__main__":
     time.sleep(5)
     p.Publish(p,"nodes",json.dumps(
          {
-"ID":id,
-"IP":data["IP"],
-"TOPIC":"node"+str(id),
-"TIME":time_interval,}))
-    pubThread=threading.Thread(target=publish,args=(p,"node"+str(id),"austin_weather.csv"))
+            "ID":id,
+            "IP":data["IP"],
+            "TOPIC":data["TOPIC"],
+            "TIME":time_interval,}))
+    pubThread=threading.Thread(target=publish,args=(p,data["TOPIC"],"austin_weather.csv"))
     pubThread.start()
     while True:
         pass
