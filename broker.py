@@ -5,6 +5,7 @@ import sys
 import json
 import threading
 from mqtt import Mqtt
+import pdb
 class brokerMqtt(Mqtt):
     '''
         mqtt
@@ -12,27 +13,38 @@ class brokerMqtt(Mqtt):
     def __init__(self,sub_topic,node_name,central_ip,last_will,port=1883,anonymous=True,timeout=60):
         super().__init__(sub_topic,node_name,central_ip,last_will)
         self.cnx=self.connectToSql()
+        self.topic.append("nodes")
     def default_on_message(self,client, userdata, msg):
         '''
             callback function when receive message
         '''
         # print(msg.payload.decode('utf-8'))
+        pdb.set_trace()
         cursor = self.cnx.cursor()
-        for topic in self.topic:
-            if msg.topic==topic:
-                message=msg.payload.decode('utf-8')
-                message=json.loads(message)
-                print(message,topic)
-                if topic == "nodes":
-                    sql = "INSERT INTO "+topic+" (id, ip,topic,time) VALUES (%s,%s, %s,%s)"
-                    values = (message["ID"],message['IP'],message['TOPIC'],message["TIME"])
-                else:
-                    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    sql = "INSERT INTO "+topic+" (submission_date, temperature,weather) VALUES (%s,%s, %s)"
-                    values = (current_datetime,message['TempHighF'],message['Events'])
-                print(values)
-                cursor.execute(sql,values)
-                self.cnx.commit()
+        message=msg.payload.decode('utf-8')
+        message=json.loads(message)
+        print(message,msg.topic)
+        if msg.topic == "nodes":
+            query = "SELECT * FROM nodes WHERE id = %s"
+            params = (message["ID"],)  # 设置查询条件
+            cursor.execute(query, params)
+            if cursor.fetchone():
+                # 查询结果非空，执行更新操作
+                update_query = "UPDATE nodes SET ip = %s ,topic = %s , time=%s WHERE id = %s"
+                update_params = (message['IP'],message['TOPIC'],message["TIME"],message["ID"])  # 设置更新的值和条件
+                cursor.execute(update_query, update_params)
+            else:
+                # 查询结果为空，执行插入操作
+                insert_query = "INSERT INTO "+msg.topic+" (id, ip,topic,time) VALUES (%s,%s, %s,%s)"
+                insert_params = (message["ID"],message['IP'],message['TOPIC'],message["TIME"])  # 设置插入的值
+                cursor.execute(insert_query, insert_params)
+        else:
+            current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql = "INSERT INTO "+msg.topic+" (submission_date, temperature,weather) VALUES (%s,%s, %s)"
+            values = (current_datetime,message['TempHighF'],message['Events'])
+            print(values)
+            cursor.execute(sql,values)
+        self.cnx.commit()
         cursor.close()
     def connectToSql(self):
         cnx = mysql.connector.connect(
@@ -52,11 +64,11 @@ def input_thread():
         global user_input
         user_input = input()
 node_number=2
-p=brokerMqtt(["node"+str(i) for i in range(1,node_number)],10)
+p=brokerMqtt(["node"+str(i) for i in range(2,2+node_number)],10,"18.118.120.113",False)
 p.Start()
 #the thread of input
-input_thread = threading.Thread(target=input_thread)
-input_thread.start()
+# input_thread = threading.Thread(target=input_thread)
+# input_thread.start()
 while True:
     if 'user_input' in globals():
         print("input 'q' to exit: ",user_input)

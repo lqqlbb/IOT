@@ -58,6 +58,7 @@ class Mqtt:
         '''
         if rc==0:
             self.connected=True
+            print("connection set up")
 
         else:
             raise Exception("Failed to connect mqtt server with code"+str(rc))
