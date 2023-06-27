@@ -32,8 +32,11 @@ class Mqtt:
             last_will_message = "Client"+self.node_name+ "disconnected"
             self.client.will_set(last_will_topic, last_will_message, qos=1)
         self.client.connect(self.broker_ip, self.broker_port, self.timeout)     #start to connect
-        for topic in self.topic:
-            self.client.subscribe(topic)
+        if isinstance(self.topic,list):
+            for topic in self.topic:
+                self.client.subscribe(topic)
+        else:
+            self.client.subscribe(self.topic)
         self.client.loop_start()    #start a thread 
     def Publish(self,topic,payload,qos=0,retain=False):
         '''

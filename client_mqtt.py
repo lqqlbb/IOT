@@ -12,7 +12,7 @@ class brokerMqtt(Mqtt):
      def default_on_message(self,client, userdata, msg):
           message=msg.payload.decode('utf-8')
           message=json.loads(message)
-          time_interval=message['time']
+          time_interval=message['TIME']
           data["TIME"]=time_interval
           with open('constants.json', 'w') as file:
             json.dump(data,file)
