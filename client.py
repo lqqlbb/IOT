@@ -158,13 +158,13 @@ if __name__ =="__main__":
          time.sleep(2)
 
     setRoute()
-    pdb.set_trace()
-    id=2
-    p=Mqtt(str(id),id)
-    p.Start()
-    time.sleep(5)
-    pubThread=threading.Thread(target=publish,args=(str(id),"austin_weather.csv"))
-    pubThread.start()
+    # pdb.set_trace()
+    # id=2
+    # p=Mqtt(str(id),id)
+    # p.Start()
+    # time.sleep(5)
+    # pubThread=threading.Thread(target=publish,args=(str(id),"austin_weather.csv"))
+    # pubThread.start()
 
     while True:
         pass
