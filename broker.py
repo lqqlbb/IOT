@@ -31,12 +31,12 @@ class brokerMqtt(Mqtt):
             if cursor.fetchone():
                 # if the result is not none
                 update_query = "UPDATE nodes SET ip = %s ,topic = %s , time=%s WHERE id = %s"
-                update_params = (message['IP'],message['TOPIC'],message["TIME"],message["ID"])  # 设置更新的值和条件
+                update_params = (message['IP'],message['TOPIC'],message["TIME"],message["ID"])  # data to update
                 cursor.execute(update_query, update_params)
             else:
                 # if the result is none.
                 insert_query = "INSERT INTO "+msg.topic+" (id, ip,topic,time) VALUES (%s,%s, %s,%s)"
-                insert_params = (message["ID"],message['IP'],message['TOPIC'],message["TIME"])  # 设置插入的值
+                insert_params = (message["ID"],message['IP'],message['TOPIC'],message["TIME"])  # insert data
                 cursor.execute(insert_query, insert_params)
         else:
             current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
