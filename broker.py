@@ -19,22 +19,22 @@ class brokerMqtt(Mqtt):
             callback function when receive message
         '''
         # print(msg.payload.decode('utf-8'))
-        pdb.set_trace()
+        # pdb.set_trace()
         cursor = self.cnx.cursor()
         message=msg.payload.decode('utf-8')
         message=json.loads(message)
         print(message,msg.topic)
         if msg.topic == "nodes":
             query = "SELECT * FROM nodes WHERE id = %s"
-            params = (message["ID"],)  # 设置查询条件
+            params = (message["ID"],)  # set select condition
             cursor.execute(query, params)
             if cursor.fetchone():
-                # 查询结果非空，执行更新操作
+                # if the result is not none
                 update_query = "UPDATE nodes SET ip = %s ,topic = %s , time=%s WHERE id = %s"
                 update_params = (message['IP'],message['TOPIC'],message["TIME"],message["ID"])  # 设置更新的值和条件
                 cursor.execute(update_query, update_params)
             else:
-                # 查询结果为空，执行插入操作
+                # if the result is none.
                 insert_query = "INSERT INTO "+msg.topic+" (id, ip,topic,time) VALUES (%s,%s, %s,%s)"
                 insert_params = (message["ID"],message['IP'],message['TOPIC'],message["TIME"])  # 设置插入的值
                 cursor.execute(insert_query, insert_params)
@@ -63,39 +63,51 @@ def input_thread():
     while running:
         global user_input
         user_input = input()
+def change_constants(mode:str,id:int):
+    cn = mysql.connector.connect(
+        host="localhost",
+        user="node1",
+        password="aaa",
+        database="test")
+    cursor=cn.cursor()
+    query = "SELECT time FROM nodes WHERE id = %s"
+    params = (id,)  # 设置查询条件
+    cursor.execute(query, params)
+    result = cursor.fetchall()[0][0]
+    print(result)
+    if mode=="p":
+        p.Publish('down'+str(id),json.dumps({"TIME":result+1}))
+        update_query = "UPDATE nodes SET time=%s WHERE id = %s"
+        update_params = (result+1,id)  # 设置更新的值和条件
+    elif mode=="m":
+        p.Publish('down'+str(id),json.dumps({"TIME":result-1}))
+        update_query = "UPDATE nodes SET time=%s WHERE id = %s"
+        update_params = (result-1,id)  # 设置更新的值和条件
+    cursor.execute(update_query, update_params)
+    cn.commit()
+    cursor.close()
+    cn.close()
 node_number=2
 p=brokerMqtt(["node"+str(i) for i in range(2,2+node_number)],10,"18.118.120.113",False)
 p.Start()
-#the thread of input
-# input_thread = threading.Thread(target=input_thread)
-# input_thread.start()
+# the thread of input
+input_thread = threading.Thread(target=input_thread)
+input_thread.start()
 while True:
     if 'user_input' in globals():
-        print("input 'q' to exit: ",user_input)
+        print("input 'q' to exit,'p' to plus 1s to time interval,'m' to minors 1s: ",user_input)
         if user_input.lower() == "q":
             p.disconnectTOSql()
             print("Bye")
             running=False
             del user_input
             sys.exit()  # exit the program
+        elif user_input.lower() == "p":
+            change_constants("p",2)
+        elif user_input.lower() == "m":
+            change_constants("m",2)
             
         del user_input
 
 
-# #insert new rows
-# sql = "INSERT INTO your_table (column1, column2, column3) VALUES (%s, %s, %s)"
-# values = ("Value1", "Value2", "Value3")
-# # 执行SQL查询
-# query = "SELECT * FROM students"
-# cursor.execute(query)
 
-# # 获取查询结果
-# result = cursor.fetchall()
-
-# # 处理查询结果
-# for row in result:
-#     print(row)
-
-# # 关闭游标和连接
-# cursor.close()
-# cnx.close()
