@@ -8,12 +8,14 @@ import random
 import pdb
 import json
 import pandas as pd
-class brokerMqtt(Mqtt):
+class clientMqtt(Mqtt):
      def default_on_message(self,client, userdata, msg):
+#          pdb.set_trace()
           message=msg.payload.decode('utf-8')
           message=json.loads(message)
           time_interval=message['TIME']
           data["TIME"]=time_interval
+          print(data)
           with open('constants.json', 'w') as file:
             json.dump(data,file)
 def publish(client,topic:str,file:str):
@@ -35,10 +37,10 @@ if __name__ =="__main__":
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
     time_interval=data["TIME"]
-    p=Mqtt("down"+str(id),id,BROKER_IP,True)
+    p=clientMqtt("down"+str(id),id,BROKER_IP,True)
     p.Start()
     time.sleep(5)
-    p.Publish(p,"nodes",json.dumps(
+    p.Publish("nodes",json.dumps(
          {
             "ID":id,
             "IP":data["IP"],
