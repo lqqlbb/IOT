@@ -71,18 +71,18 @@ def change_constants(mode:str,id:int):
         database="test")
     cursor=cn.cursor()
     query = "SELECT time FROM nodes WHERE id = %s"
-    params = (id,)  # 设置查询条件
+    params = (id,)  # set select condition
     cursor.execute(query, params)
     result = cursor.fetchall()[0][0]
     print(result)
     if mode=="p":
         p.Publish('down'+str(id),json.dumps({"TIME":result+1}))
         update_query = "UPDATE nodes SET time=%s WHERE id = %s"
-        update_params = (result+1,id)  # 设置更新的值和条件
+        update_params = (result+1,id)  # set data to update
     elif mode=="m":
         p.Publish('down'+str(id),json.dumps({"TIME":result-1}))
         update_query = "UPDATE nodes SET time=%s WHERE id = %s"
-        update_params = (result-1,id)  # 设置更新的值和条件
+        update_params = (result-1,id)  # set data to update
     cursor.execute(update_query, update_params)
     cn.commit()
     cursor.close()
