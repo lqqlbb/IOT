@@ -6,6 +6,7 @@ import threading
 import random
 import pdb
 import json
+from mqtt import Mqtt
 def isInSubnet(ip:str,subnet:str) -> bool:
     # print(ip)
     if(ip[0:6]==subnet[0:6]):
@@ -70,6 +71,38 @@ def rewrite_file(filename, new_content):
     with open(filename, 'w') as file:
         file.write(new_content)
         
+class updateMqtt(Mqtt):
+    def default_on_message(self,client, userdata, msg):
+        message=msg.payload.decode('utf-8')
+        message=json.loads(message)
+        if message["instruction"]=="update":
+            command = '''git pull origin client
+                         git reset --hard origin/client
+                         python client_mqtt'''
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("Update successfully!")
+            else:
+                print("An error occurred while updating.")
+                print("Error message:")
+                print(result.stderr)
+                self.Publish("update"+str(data["ID"]),json.dumps(
+         {
+            "update_error":result.stderr,
+            }))
+        elif message["instruction"]=="backtrace":
+            command = "git reset --hard "+message["version"]
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("Reset successfully!")
+            else:
+                print("An error occurred while reseting.")
+                print("Error message:")
+                print(result.stderr)
+                self.Publish("update"+str(data["ID"]),json.dumps(
+         {
+            "reset_error":result.stderr,
+            }))
 if __name__ =="__main__":
     args = sys.argv
     with open('constants.json', 'r') as file:
