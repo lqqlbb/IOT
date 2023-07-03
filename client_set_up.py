@@ -114,11 +114,16 @@ if __name__ =="__main__":
     data["ID"]=id
     data["IP"]=ip
     data["TOPIC"]="node"+str(id)
+    CENTRAL_IP=data["BROKER_IP"]
     with open('constants.json', 'w') as file:
         json.dump(data,file)
     if (args[-1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
-    setRoute()
+    setRoute() 
+    q=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
+    q.Start()
+    while True:
+        time.sleep(2)
     
 
