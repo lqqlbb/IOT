@@ -45,11 +45,14 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     os.system("sudo ifconfig br0 "+ip)
     os.system("sudo ip route add "+edgeIp+" via "+ip+" dev br0")
     print("bridge made")
-def setRoute():
+def setRoute(end:bool):
     while True:
 #            pdb.set_trace()
             os.system("sudo ip route del default via 0.0.0.0")
-            os.system("sudo ip route add default via "+EDGE_IP)
+            if end:
+                os.system("sudo ip route add default via "+EDGE_IP)
+            else:
+                os.system("sudo ip route add default via "+EDGE_IP+" dev br0")
             time.sleep(2)
             pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
@@ -120,7 +123,7 @@ if __name__ =="__main__":
     if (args[-1] != "end"):
          makeBridge(ip,EDGE_IP)
          time.sleep(2)
-    setRoute() 
+    setRoute((args[-1] == "end")) 
     q=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
     q.Start()
     while True:
