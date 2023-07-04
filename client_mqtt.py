@@ -13,8 +13,8 @@ class clientMqtt(Mqtt):
 #          pdb.set_trace()
           message=msg.payload.decode('utf-8')
           message=json.loads(message)
-          time_interval=message['TIME']
-          data["TIME"]=time_interval
+          time_interval.value=message['TIME']
+          data["TIME"]=time_interval.value
           print(data)
           with open('constants.json', 'w') as file:
             json.dump(data,file)
@@ -27,8 +27,8 @@ def publish(client,topic:str,file:str):
                 for index, row in df.iterrows():
 #                    print(row.to_json())
                     client.Publish(topic,row.to_json())
-                    print(time_interval)
-                    time.sleep(time_interval)
+                    print(time_interval.value)
+                    time.sleep(time_interval.value)
         except:
                 print("fail to publish "+file+" to "+topic)
 if __name__ =="__main__":
@@ -37,7 +37,7 @@ if __name__ =="__main__":
         data = json.load(file)
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
-    time_interval=data["TIME"]
+    time_interval=threading.Value('i', data["TIME"]）
     p=clientMqtt("down"+str(id),id,BROKER_IP,True)
     p.Start()
     time.sleep(5)
