@@ -39,7 +39,7 @@ if __name__ =="__main__":
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
     time_interval=data["TIME"]
-    p=clientMqtt("down"+str(id),id,BROKER_IP,True)
+    p=clientMqtt(["down"+str(id),"update"+str(id)],id,BROKER_IP,True)
     p.Start()
     time.sleep(5)
     p.Publish("nodes",json.dumps(
