@@ -27,6 +27,7 @@ def publish(client,topic:str,file:str):
                 for index, row in df.iterrows():
 #                    print(row.to_json())
                     client.Publish(topic,row.to_json())
+                    print(time_interval)
                     time.sleep(time_interval)
         except:
                 print("fail to publish "+file+" to "+topic)
