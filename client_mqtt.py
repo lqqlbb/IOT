@@ -37,7 +37,7 @@ if __name__ =="__main__":
         data = json.load(file)
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
-    time_interval=threading.Value('i', data["TIME"]）
+    time_interval=threading.Value('i', data["TIME"])
     p=clientMqtt("down"+str(id),id,BROKER_IP,True)
     p.Start()
     time.sleep(5)
