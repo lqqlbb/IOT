@@ -13,12 +13,17 @@ class clientMqtt(Mqtt):
 #          pdb.set_trace()
           message=msg.payload.decode('utf-8')
           message=json.loads(message)
-          global time_interval
-          time_interval=message['TIME']
-          data["TIME"]=time_interval
-          print(data)
-          with open('constants.json', 'w') as file:
-            json.dump(data,file)
+          if message["instruction"]=="change_speed":   
+               global time_interval
+               time_interval=message['TIME']
+               data["TIME"]=time_interval
+               print(data)
+               with open('constants.json', 'w') as file:
+                 json.dump(data,file)
+          elif message["instruction"]=="stop":
+               sys.exit()
+          elif message["instruction"]=="pause":
+               pass
 def publish(client,topic:str,file:str):
     df=pd.read_csv(file)
     print(topic)
@@ -39,7 +44,7 @@ if __name__ =="__main__":
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
     time_interval=data["TIME"]
-    p=clientMqtt(["down"+str(id),"update"+str(id)],id,BROKER_IP,True)
+    p=clientMqtt(["down"+str(id)],id,BROKER_IP,True)
     p.Start()
     time.sleep(5)
     p.Publish("nodes",json.dumps(
