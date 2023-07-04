@@ -81,7 +81,7 @@ class updateMqtt(Mqtt):
         if message["instruction"]=="update":
             command = '''git fetch origin client
                          git reset --hard origin/client
-                         python client_mqtt'''
+                         python client_mqtt.py'''
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             if result.returncode == 0:
                 print("Update successfully!")
