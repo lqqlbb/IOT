@@ -80,8 +80,7 @@ class updateMqtt(Mqtt):
         message=json.loads(message)
         if message["instruction"]=="update":
             command = '''git fetch origin client
-                         git reset --hard origin/client
-                         python client_mqtt.py'''
+                         git reset --hard origin/client'''
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             if result.returncode == 0:
                 print("Update successfully!")
@@ -106,6 +105,21 @@ class updateMqtt(Mqtt):
          {
             "reset_error":result.stderr,
             }))
+        elif message["instruction"]=="start":
+            command = ''python client_mqtt.py''
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("Running successfully!")
+            else:
+                print("An error occurred while running.")
+                print("Error message:")
+                print(result.stderr)
+                self.Publish("update"+str(data["ID"]),json.dumps(
+         {
+            "running_error":result.stderr,
+            }))
+        elif message["instruction"]=="stop":
+            pass
 if __name__ =="__main__":
     args = sys.argv
     with open('constants.json', 'r') as file:
