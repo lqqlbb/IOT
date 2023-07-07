@@ -8,6 +8,7 @@ import random
 import pdb
 import json
 import pandas as pd
+import signal
 class clientMqtt(Mqtt):
      def default_on_message(self,client, userdata, msg):
 #          pdb.set_trace()
@@ -21,7 +22,8 @@ class clientMqtt(Mqtt):
                with open('constants.json', 'w') as file:
                  json.dump(data,file)
           elif message["instruction"]=="stop":
-               sys.exit()
+               pid = os.getpid() 
+               os.kill(pid, signal.SIGTERM)
           elif message["instruction"]=="pause":
                pass
 def publish(client,topic:str,file:str):
