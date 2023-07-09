@@ -106,7 +106,7 @@ class updateMqtt(Mqtt):
             "reset_error":result.stderr,
             }))
         elif message["instruction"]=="start":
-            command = ''python client_mqtt.py''
+            command = '''python client_mqtt.py'''
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             if result.returncode == 0:
                 print("Running successfully!")
@@ -120,27 +120,50 @@ class updateMqtt(Mqtt):
             }))
         elif message["instruction"]=="stop":
             pass
+def check_connection():
+    global connection
+    connection=False
+    while True:
+        pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
+        
+        if(pingResult!=0):
+            try:
+                output = subprocess.check_output(["ifconfig", "eth0"])
+                global ip,id
+                ip,id=start_connection()
+                
+            except subprocess.CalledProcessError:
+                print("Can't get ip and id from edge")
+                time.sleep(2)
+        else:
+            
+            connection=True
+            time.sleep(5)
+def start_connection():
+    ip,id=getDHCPip()
+    print("IP:",ip,"\n","ID:",id,"\n")
+    with open('constants.json', 'w') as file:
+        json.dump(data,file)
+    if (args[-1] != "end"):
+         makeBridge(ip,EDGE_IP)
+         time.sleep(2)
+    setRoute() 
+    return ip,id
 if __name__ =="__main__":
     args = sys.argv
     with open('constants.json', 'r') as file:
         data = json.load(file)
     EDGE_IP=data["EDGE_IP"]
     SUBNET=data["SUBNET"]
-    ip,id=getDHCPip()
-    print("IP:",ip,"\n","ID:",id,"\n")
-    data["ID"]=id
-    data["IP"]=ip
-    data["TOPIC"]="node"+str(id)
     CENTRAL_IP=data["BROKER_IP"]
-    with open('constants.json', 'w') as file:
-        json.dump(data,file)
-    if (args[-1] != "end"):
-         makeBridge(ip,EDGE_IP)
-         time.sleep(2)
-    setRoute((args[-1] == "end")) 
-    q=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
-    q.Start()
-    while True:
-        time.sleep(2)
-    
+    connect_thread = threading.Thread(target=check_connection)
+    connect_thread.start()
+    if(connection):
+        data["ID"]=id
+        data["IP"]=ip
+        data["TOPIC"]="node"+str(id)
+        q=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
+        q.Start()
+        while True:
+            time.sleep(2)
 

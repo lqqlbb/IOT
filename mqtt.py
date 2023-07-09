@@ -69,4 +69,7 @@ class Mqtt:
             callback function when receive message
         '''
         print(msg.payload.decode('utf-8'))
+    def close_connection(self):
+        self.client.loop_stop()
+        self.client.disconnect()
         

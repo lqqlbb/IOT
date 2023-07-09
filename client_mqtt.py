@@ -22,6 +22,7 @@ class clientMqtt(Mqtt):
                with open('constants.json', 'w') as file:
                  json.dump(data,file)
           elif message["instruction"]=="stop":
+               self.close_connection()
                pid = os.getpid() 
                os.kill(pid, signal.SIGTERM)
           elif message["instruction"]=="pause":
