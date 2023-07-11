@@ -88,7 +88,7 @@ class updateMqtt(Mqtt):
                 print("An error occurred while updating.")
                 print("Error message:")
                 print(result.stderr)
-                self.Publish("update"+str(data["ID"]),json.dumps(
+                self.Publish("update"+data["ID"],json.dumps(
          {
             "update_error":result.stderr,
             }))
@@ -101,7 +101,7 @@ class updateMqtt(Mqtt):
                 print("An error occurred while reseting.")
                 print("Error message:")
                 print(result.stderr)
-                self.Publish("update"+str(data["ID"]),json.dumps(
+                self.Publish("update"+data["ID"],json.dumps(
          {
             "reset_error":result.stderr,
             }))
@@ -114,7 +114,7 @@ class updateMqtt(Mqtt):
                 print("An error occurred while running.")
                 print("Error message:")
                 print(result.stderr)
-                self.Publish("update"+str(data["ID"]),json.dumps(
+                self.Publish("update"+data["ID"],json.dumps(
          {
             "running_error":result.stderr,
             }))
@@ -161,8 +161,8 @@ if __name__ =="__main__":
     if(connection):
         data["ID"]=id
         data["IP"]=ip
-        data["TOPIC"]="node"+str(id)
-        q=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
+        data["TOPIC"]="node"+id
+        q=updateMqtt("update"+id,id+"_update",CENTRAL_IP,True)
         q.Start()
         while True:
             time.sleep(2)

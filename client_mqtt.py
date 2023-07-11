@@ -9,6 +9,7 @@ import pdb
 import json
 import pandas as pd
 import signal
+import queue
 class clientMqtt(Mqtt):
      def default_on_message(self,client, userdata, msg):
 #          pdb.set_trace()
@@ -38,8 +39,10 @@ def publish(client,topic:str,file:str):
                     client.Publish(topic,row.to_json())
                     print(time_interval)
                     time.sleep(time_interval)
-        except:
+        except Exception as e:
+                err_queue.put(e)
                 print("fail to publish "+file+" to "+topic)
+                return
 if __name__ =="__main__":
     
     with open('constants.json', 'r') as file:
@@ -56,7 +59,11 @@ if __name__ =="__main__":
             "IP":data["IP"],
             "TOPIC":data["TOPIC"],
             "TIME":time_interval,}))
+    err_queue = queue.Queue()
     pubThread=threading.Thread(target=publish,args=(p,data["TOPIC"],"austin_weather.csv"))
     pubThread.start()
     while True:
-        pass
+        while not err_queue.empty(): 
+            error = err_queue.get()
+            print('Error:', error)
+        time.sleep(2)
