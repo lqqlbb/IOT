@@ -1,4 +1,5 @@
 from mqtt import Mqtt
+from datetime import datetime
 import os
 import time
 import subprocess
@@ -10,6 +11,7 @@ import json
 import pandas as pd
 import signal
 import queue
+
 class clientMqtt(Mqtt):
      def default_on_message(self,client, userdata, msg):
 #          pdb.set_trace()
@@ -35,8 +37,10 @@ def publish(client,topic:str,file:str):
         try:
                 
                 for index, row in df.iterrows():
-#                    print(row.to_json())
-                    client.Publish(topic,row.to_json())
+                    row=json.loads(row.to_json())
+                    row["time"]=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    print(row)
+                    client.Publish(topic,json.dumps(row))
                     print(time_interval)
                     time.sleep(time_interval)
         except Exception as e:
