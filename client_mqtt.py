@@ -58,7 +58,8 @@ if __name__ =="__main__":
             "ID":id,
             "IP":data["IP"],
             "TOPIC":data["TOPIC"],
-            "TIME":time_interval,}))
+            "TIME":time_interval,
+            "DETECTION":data["DETECTION"]}))
     err_queue = queue.Queue()
     pubThread=threading.Thread(target=publish,args=(p,data["TOPIC"],"austin_weather.csv"))
     pubThread.start()
