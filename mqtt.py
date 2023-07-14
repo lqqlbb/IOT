@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import pdb
 class Mqtt:
     '''
         mqtt
@@ -24,6 +25,7 @@ class Mqtt:
         start publisher
         :return:
         '''
+#        pdb.set_trace()
         self.client = mqtt.Client(self.node_name)     #set up client
         self.client.on_connect = self.on_connect  # call back function
         self.client.on_message=self.default_on_message
