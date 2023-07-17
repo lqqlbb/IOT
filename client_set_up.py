@@ -170,7 +170,6 @@ def start_connection(end:bool):
     setRoute(end) 
     return ip,id
 def check_connection_mqtt():
-    global flag
     flag=0
     while True:
         if(connection):
@@ -180,8 +179,8 @@ def check_connection_mqtt():
                     mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
                     flag=1
             mqtt_instance.Start()
-            while not mqtt_instance.connected:
-                pass
+            # while not mqtt_instance.connected:
+            #     pass
         else:
             time.sleep(3)
 if __name__ =="__main__":
