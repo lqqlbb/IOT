@@ -106,8 +106,8 @@ class updateMqtt(Mqtt):
             "reset_error":result.stderr,
             }))
         elif message["instruction"]=="start":
-            command = '''python client_mqtt.py'''
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            command = "python client_mqtt.py"
+            result = subprocess.Popen(command, shell=True, capture_output=True, text=True)
             if result.returncode == 0:
                 print("Running successfully!")
             else:
