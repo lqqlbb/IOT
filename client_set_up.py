@@ -161,17 +161,12 @@ def start_connection(end:bool):
     setRoute(end) 
     return ip,id
 if __name__ =="__main__":
-    args = sys.argv
-    if (args[-1] != "end"):
-        end=0
-    else:
-        end=1
     with open('constants.json', 'r') as file:
         data = json.load(file)
     EDGE_IP=data["EDGE_IP"]
     SUBNET=data["SUBNET"]
     CENTRAL_IP=data["BROKER_IP"]
-    connect_thread = threading.Thread(target=check_connection,args=(end,))
+    connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
     if(connection):
         data["ID"]=id
