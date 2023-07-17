@@ -175,6 +175,7 @@ def check_connection_mqtt():
         # pdb.set_trace()
         if(connection):
             if flag==0:
+                    pdb.set_trace()
                     id=data["ID"]
                     ip=data["IP"]
                     mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
@@ -182,7 +183,7 @@ def check_connection_mqtt():
             # 
             # print(mqtt_instance.connected)
             if not mqtt_instance.connected:
-                # pdb.set_trace()
+                pdb.set_trace()
                 mqtt_instance.Start()
         else:
             time.sleep(3)
