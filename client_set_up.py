@@ -157,7 +157,7 @@ def start_connection(end:bool):
         json.dump(data,file)
     if not end:
          makeBridge(ip,EDGE_IP)
-         time.sleep(2)z
+         time.sleep(2)
     setRoute(end) 
     return ip,id
 if __name__ =="__main__":
