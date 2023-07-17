@@ -123,14 +123,15 @@ class updateMqtt(Mqtt):
 def check_connection():
     global connection
     connection=False
+    p_end=1
     while True:
         result = subprocess.run(['ifconfig', 'eth1'])
         if result.returncode == 0:
-            end=False
+            end=0
         else:
-            end=True
+            end=1
         pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
-        if(pingResult.returncode!=0 or end==0):
+        if(pingResult.returncode!=0 or ((p_end+end)==1)):
             try:
                 output = subprocess.check_output(["sudo", "ethtool", "eth0"]).decode('utf-8')
                 if "Link detected: yes" in output:
@@ -149,6 +150,7 @@ def check_connection():
         else:
             
             connection=True
+            p_end=end
             time.sleep(5)
 def start_connection(end:bool):
     ip,id=getDHCPip()
