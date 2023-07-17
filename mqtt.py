@@ -62,7 +62,7 @@ class Mqtt:
         '''
         if rc==0:
             self.connected=True
-            pdb.set_trace()
+            # pdb.set_trace()
             print("connection set up")
 
         else:
