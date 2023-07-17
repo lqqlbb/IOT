@@ -124,7 +124,7 @@ def check_connection():
     global connection
     connection=False
     while True:
-        result = subprocess.run(['ifconfig', 'eth1']）
+        result = subprocess.run(['ifconfig', 'eth1'])
         if result.returncode == 0:
             end=False
         else:
