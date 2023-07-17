@@ -172,6 +172,7 @@ def start_connection(end:bool):
 def check_connection_mqtt():
     flag=0
     while True:
+        pdb.set_trace()
         if(connection):
             if flag==0:
                     id=data["ID"]
