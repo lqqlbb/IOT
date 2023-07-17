@@ -131,7 +131,8 @@ def check_connection():
         else:
             end=1
         pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
-        if(pingResult.returncode!=0 or ((p_end+end)==1)):
+        print((p_end^end))
+        if(pingResult.returncode!=0 or ((p_end^end)==1)):
             try:
                 output = subprocess.check_output(["sudo", "ethtool", "eth0"]).decode('utf-8')
                 if "Link detected: yes" in output:
