@@ -187,6 +187,7 @@ def check_connection_mqtt():
             #     # pdb.set_trace()
                 print(mqtt_instance.connected)
                 mqtt_instance.Start()
+                time.sleep(3)
         else:
             time.sleep(3)
 if __name__ =="__main__":
