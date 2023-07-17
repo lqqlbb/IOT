@@ -47,7 +47,7 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     print("bridge made")
 def setRoute(end:bool):
     for i in range(10):
-           pdb.set_trace()
+            pdb.set_trace()
             os.system("sudo ip route del default via 0.0.0.0")
             if end:
                 os.system("sudo ip route add default via "+EDGE_IP)
