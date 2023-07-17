@@ -178,9 +178,8 @@ def check_connection_mqtt():
                     ip=data["IP"]
                     mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
                     flag=1
-            mqtt_instance.Start()
-            # while not mqtt_instance.connected:
-            #     pass
+            if not mqtt_instance.connected:
+                mqtt_instance.Start()
         else:
             time.sleep(3)
 if __name__ =="__main__":
