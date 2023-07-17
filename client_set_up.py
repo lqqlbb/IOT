@@ -151,8 +151,8 @@ def check_connection():
         else:
             
             connection=True
-            p_end=end
             time.sleep(5)
+        p_end=end
 def start_connection(end:bool):
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
