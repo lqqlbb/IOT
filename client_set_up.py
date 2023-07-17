@@ -175,6 +175,7 @@ if __name__ =="__main__":
     CENTRAL_IP=data["BROKER_IP"]
     connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
+    print(connection)
     if(connection):
         data["ID"]=id
         data["IP"]=ip
