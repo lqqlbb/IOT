@@ -131,7 +131,7 @@ def check_connection():
         else:
             end=1
         pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
-        print(p_end,end,(p_end^end))
+        # print(p_end,end,(p_end^end))
         if(pingResult.returncode!=0 or ((p_end^end)==1)):
             try:
                 if (p_end==0 and end==1):
