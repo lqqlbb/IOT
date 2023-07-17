@@ -46,8 +46,8 @@ def makeBridge(ip:str,edgeIp:SyntaxError):
     os.system("sudo ip route add "+edgeIp+" via "+ip+" dev br0")
     print("bridge made")
 def setRoute(end:bool):
-    while True:
-#            pdb.set_trace()
+    for i in range(10):
+           # pdb.set_trace()
             os.system("sudo ip route del default via 0.0.0.0")
             if end:
                 os.system("sudo ip route add default via "+EDGE_IP)
@@ -124,13 +124,24 @@ def check_connection():
     global connection
     connection=False
     while True:
+        result = subprocess.run(['ifconfig', 'eth1']）
+        if result.returncode == 0:
+            end=False
+        else:
+            end=True
         pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
-        
         if(pingResult!=0):
             try:
-                output = subprocess.check_output(["ifconfig", "eth0"])
+                output = subprocess.check_output(["sudo", "ethtool", "eth0"]).decode('utf-8')
+                if "Link detected: yes" in output:
+                        print("Link detected on eth0")
+                elif "Link detected: no" in output:
+                        print("No link detected on eth0")
+                        continue
+                else:
+                        print("Could not determine link status of eth0")
                 global ip,id
-                ip,id=start_connection()
+                ip,id=start_connection(end)
                 
             except subprocess.CalledProcessError:
                 print("Can't get ip and id from edge")
@@ -139,24 +150,28 @@ def check_connection():
             
             connection=True
             time.sleep(5)
-def start_connection():
+def start_connection(end:bool):
     ip,id=getDHCPip()
     print("IP:",ip,"\n","ID:",id,"\n")
     with open('constants.json', 'w') as file:
         json.dump(data,file)
-    if (args[-1] != "end"):
+    if not end:
          makeBridge(ip,EDGE_IP)
-         time.sleep(2)
-    setRoute() 
+         time.sleep(2)z
+    setRoute(end) 
     return ip,id
 if __name__ =="__main__":
     args = sys.argv
+    if (args[-1] != "end"):
+        end=0
+    else:
+        end=1
     with open('constants.json', 'r') as file:
         data = json.load(file)
     EDGE_IP=data["EDGE_IP"]
     SUBNET=data["SUBNET"]
     CENTRAL_IP=data["BROKER_IP"]
-    connect_thread = threading.Thread(target=check_connection)
+    connect_thread = threading.Thread(target=check_connection,args=(end,))
     connect_thread.start()
     if(connection):
         data["ID"]=id
