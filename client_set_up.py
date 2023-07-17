@@ -183,7 +183,8 @@ def check_connection_mqtt():
                     flag=1
             # 
             # print(mqtt_instance.connected)
-            # if not mqtt_instance.connected:
+            if not mqtt_instance.connected:
+                pass
             #     # pdb.set_trace()
             #     mqtt_instance.Start()
         else:
