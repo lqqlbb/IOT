@@ -133,9 +133,11 @@ def check_connection():
         pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
         print(p_end,end,(p_end^end))
         if(pingResult.returncode!=0 or ((p_end^end)==1)):
-            os.system("sudo systemctl restart network")
-            time.sleep(3)
             try:
+                if (p_end==0 and end==1):
+                    os.system("sudo ifconfig br0 down")
+                    os.system("sudo brctl delbr br0")
+                    os.system("sudo ip route flush dev br0")
                 output = subprocess.check_output(["sudo", "ethtool", "eth0"]).decode('utf-8')
                 if "Link detected: yes" in output:
                         print("Link detected on eth0")
