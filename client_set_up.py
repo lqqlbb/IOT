@@ -54,7 +54,7 @@ def setRoute(end:bool):
             else:
                 os.system("sudo ip route add default via "+EDGE_IP+" dev br0")
             time.sleep(2)
-            pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
+            pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
             routeResult = subprocess.run(['route', '-n'], capture_output=True, text=True)
 #            print(routeResult)
             output_lines = routeResult.stdout.split('\n')
@@ -129,7 +129,7 @@ def check_connection():
             end=False
         else:
             end=True
-        pingResult = subprocess.run(['ping', '-c', '1', '8.8.8.8'], capture_output=True)
+        pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
         if(pingResult!=0):
             try:
                 output = subprocess.check_output(["sudo", "ethtool", "eth0"]).decode('utf-8')
