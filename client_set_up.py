@@ -107,17 +107,7 @@ class updateMqtt(Mqtt):
             }))
         elif message["instruction"]=="start":
             command = "python client_mqtt.py"
-            result = subprocess.Popen(command, shell=True, capture_output=True, text=True)
-            if result.returncode == 0:
-                print("Running successfully!")
-            else:
-                print("An error occurred while running.")
-                print("Error message:")
-                print(result.stderr)
-                self.Publish("update"+data["ID"],json.dumps(
-         {
-            "running_error":result.stderr,
-            }))
+            result = subprocess.Popen(command, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         elif message["instruction"]=="stop":
             pass
 def check_connection():
