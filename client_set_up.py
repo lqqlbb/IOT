@@ -177,7 +177,6 @@ def check_connection_mqtt():
             #     # pdb.set_trace()
                 # print(mqtt_instance.connected)
                 mqtt_instance.Start()
-                time.sleep(3)
             time.sleep(3)
 if __name__ =="__main__":
     with open('constants.json', 'r') as file:
