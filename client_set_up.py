@@ -178,7 +178,6 @@ def check_connection_mqtt():
                 # print(mqtt_instance.connected)
                 mqtt_instance.Start()
                 time.sleep(3)
-        else:
             time.sleep(3)
 if __name__ =="__main__":
     with open('constants.json', 'r') as file:
