@@ -75,6 +75,9 @@ def rewrite_file(filename, new_content):
         file.write(new_content)
         
 class updateMqtt(Mqtt):
+    def __init__(self,sub_topic,node_name,central_ip,last_will,port=1883,anonymous=True,timeout=60):
+        super().__init__(sub_topic,node_name,central_ip,last_will)
+        self.sshprocess = None
     def default_on_message(self,client, userdata, msg):
         message=msg.payload.decode('utf-8')
         message=json.loads(message)
@@ -108,8 +111,21 @@ class updateMqtt(Mqtt):
         elif message["instruction"]=="start":
             command = "python client_mqtt.py"
             result = subprocess.Popen(command, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        elif message["instruction"]=="stop":
-            pass
+        elif message["instruction"]=="ssh":
+            self.startssh()
+        elif message["instruction"]=="stopssh":
+            self.endssh()
+    def startssh(self):
+        command = ['ssh', '-R', '8080:localhost:22', 'user@remote_host']
+        self.sshprocess = subprocess.Popen(command)
+    def endssh(self):
+        try:
+            self.sshprocess.terminate()
+            print("success terminal ssh")
+        except:
+            print("fail to shup down ssh")
+
+
 def check_connection():
     global connection
     connection=False
