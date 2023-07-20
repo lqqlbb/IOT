@@ -7,6 +7,7 @@ import random
 import pdb
 import json
 from mqtt import Mqtt
+import pexpect
 def isInSubnet(ip:str,subnet:str) -> bool:
     # print(ip)
     if(ip[0:6]==subnet[0:6]):
@@ -116,11 +117,17 @@ class updateMqtt(Mqtt):
         elif message["instruction"]=="stopssh":
             self.endssh()
     def startssh(self):
-        command = ['ssh', '-R', '8080:localhost:22', 'user@remote_host']
-        self.sshprocess = subprocess.Popen(command)
+        remote_host = 'ubuntu@3.140.201.235'
+        remote_port = 2208
+        local_port = 22
+        ssh_command = f'ssh -fN -R {remote_port}:localhost:{local_port} {remote_host}'
+        self.sshprocess = pexpect.spawn(ssh_command)
+        self.sshprocess.expect('password:')
+        self.sshprocess.sendline('aaa')
+        self.sshprocess.expect('SSH tunnel established', timeout=None)
     def endssh(self):
         try:
-            self.sshprocess.terminate()
+            self.sshprocess.close()
             print("success terminal ssh")
         except:
             print("fail to shup down ssh")
