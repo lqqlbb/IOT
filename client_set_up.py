@@ -133,7 +133,8 @@ class updateMqtt(Mqtt):
             output = result.stdout.strip().splitlines()
             print(output)
             for i in output:
-                print(i[1])
+                words = i.split()
+                print(words[1])
             os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
