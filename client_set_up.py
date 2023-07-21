@@ -6,6 +6,7 @@ import threading
 import random
 import pdb
 import json
+import signal
 from mqtt import Mqtt
 import pexpect
 def isInSubnet(ip:str,subnet:str) -> bool:
@@ -127,7 +128,9 @@ class updateMqtt(Mqtt):
         
     def endssh(self):
         try:
-            self.sshprocess.kill()
+            self.sshprocess.close()
+            pid=self.sshprocess.pid
+            os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
             print("fail to shup down ssh")
