@@ -123,16 +123,15 @@ class updateMqtt(Mqtt):
         local_port = 22
         ssh_command = f'ssh -fN -R {remote_port}:localhost:{local_port} {remote_host}'
         self.sshprocess = pexpect.spawn(ssh_command)
-        pid=self.sshprocess.pid
-        print(pid)
         self.sshprocess.expect('ubuntu@3.140.201.235\'s password:')
         self.sshprocess.sendline('aaa')
         
     def endssh(self):
         try:
-            self.sshprocess.close()
-            pid=self.sshprocess.pid
-            print(pid)
+            command = "ps -ef | grep 'ssh -fN -R'"
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            output = result.stdout.strip().splitlines()
+            print(output)
             os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
