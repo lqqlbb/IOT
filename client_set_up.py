@@ -132,7 +132,7 @@ class updateMqtt(Mqtt):
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             output = result.stdout.strip().splitlines()
             print(output)
-            for i in output[0:-2]:
+            for i in output[0:-1]:
                 words = i.split()
                 print(words[1])
                 os.kill(pid, signal.SIGTERM)
