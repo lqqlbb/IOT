@@ -132,10 +132,10 @@ class updateMqtt(Mqtt):
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             output = result.stdout.strip().splitlines()
             print(output)
-            for i in output:
+            for i in output[0:-2]:
                 words = i.split()
                 print(words[1])
-            os.kill(pid, signal.SIGTERM)
+                os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
             print("fail to shup down ssh")
