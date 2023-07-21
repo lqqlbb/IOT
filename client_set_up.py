@@ -127,7 +127,7 @@ class updateMqtt(Mqtt):
         
     def endssh(self):
         try:
-            self.sshprocess.terminate()
+            self.sshprocess.kill()
             print("success terminal ssh")
         except:
             print("fail to shup down ssh")
