@@ -131,11 +131,9 @@ class updateMqtt(Mqtt):
             command = "ps -ef | grep 'ssh -fN -R'"
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             output = result.stdout.strip().splitlines()
-            print(output)
             for i in output[0:-2]:
                 words = i.split()
-                print(words[1])
-            os.kill(wor, signal.SIGTERM)
+                os.kill(words[1], signal.SIGTERM)
             print("success terminal ssh")
         except:
             print("fail to shup down ssh")
