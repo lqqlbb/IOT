@@ -123,6 +123,8 @@ class updateMqtt(Mqtt):
         local_port = 22
         ssh_command = f'ssh -fN -R {remote_port}:localhost:{local_port} {remote_host}'
         self.sshprocess = pexpect.spawn(ssh_command)
+        pid=self.sshprocess.pid
+        print(pid)
         self.sshprocess.expect('ubuntu@3.140.201.235\'s password:')
         self.sshprocess.sendline('aaa')
         
