@@ -132,6 +132,8 @@ class updateMqtt(Mqtt):
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             output = result.stdout.strip().splitlines()
             print(output)
+            for i in output:
+                print(i[1])
             os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
