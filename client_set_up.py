@@ -122,9 +122,9 @@ class updateMqtt(Mqtt):
         local_port = 22
         ssh_command = f'ssh -fN -R {remote_port}:localhost:{local_port} {remote_host}'
         self.sshprocess = pexpect.spawn(ssh_command)
-        self.sshprocess.expect('password:')
+        self.sshprocess.expect('ubuntu@3.140.201.235\'s password:')
         self.sshprocess.sendline('aaa')
-        self.sshprocess.expect('SSH tunnel established', timeout=None)
+        
     def endssh(self):
         try:
             self.sshprocess.close()
