@@ -130,6 +130,7 @@ class updateMqtt(Mqtt):
         try:
             self.sshprocess.close()
             pid=self.sshprocess.pid
+            print(pid)
             os.kill(pid, signal.SIGTERM)
             print("success terminal ssh")
         except:
