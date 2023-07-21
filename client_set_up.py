@@ -207,6 +207,7 @@ if __name__ =="__main__":
     EDGE_IP=data["EDGE_IP"]
     SUBNET=data["SUBNET"]
     CENTRAL_IP=data["BROKER_IP"]
+    print("upgraded")
     connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
     connect_thread = threading.Thread(target=check_connection_mqtt)
