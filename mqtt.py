@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import pdb
+import random
 class Mqtt:
     '''
         mqtt
@@ -17,7 +18,7 @@ class Mqtt:
         self.broker_port=port
         self.timeout=timeout
         self.connected=False
-        self.node_name="node"+str(node_name)
+        self.node_name="node"+str(node_name)+str(random.randint(1, 10000))
         self.last_will=last_will
         
     def Start(self):

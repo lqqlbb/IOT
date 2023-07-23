@@ -152,6 +152,7 @@ def check_connection():
         pingResult = subprocess.run(['ping', '-c', '4', '8.8.8.8'], capture_output=True)
         # print(p_end,end,(p_end^end))
         if(pingResult.returncode!=0 or ((p_end^end)==1)):
+            connection=False
             try:
                 if (p_end==0 and end==1):
                     os.system("sudo ifconfig br0 down")
@@ -174,9 +175,8 @@ def check_connection():
                     json.dump(data,file)
             except subprocess.CalledProcessError:
                 print("Can't get ip and id from edge")
-                time.sleep(2)
+                time.sleep(1)
         else:
-            
             connection=True
             time.sleep(5)
         p_end=end
@@ -207,6 +207,8 @@ def check_connection_mqtt():
                 # print(mqtt_instance.connected)
                 mqtt_instance.Start()
             time.sleep(3)
+        else:
+            time.sleep(1)
 if __name__ =="__main__":
     with open('constants.json', 'r') as file:
         data = json.load(file)
@@ -216,8 +218,8 @@ if __name__ =="__main__":
     print("upgraded")
     connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
-    connect_thread = threading.Thread(target=check_connection_mqtt)
-    connect_thread.start()
+    mqtt_thread = threading.Thread(target=check_connection_mqtt)
+    mqtt_thread.start()
     # if(connection):
     #     data["ID"]=id
     #     data["IP"]=ip
