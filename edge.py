@@ -1,15 +1,15 @@
 import os
 import threading
-from constants import*
 from mqtt import Mqtt
 import sqlite3
 import subprocess
 import time
 import json
+import random
 def DHCPserver():
         if(connection):
             os.system("sudo ifconfig eth0 "+EDGE_IP)
-            os.system("sudo ip route add "+ SUBNET+"/24 via "+EDGE_IP)
+            os.system("sudo ip route add "+ SUBNET+"/16 via "+EDGE_IP)
             os.system(f"sudo python {DHCPserverAddress}")
 def NatWlan():
     os.system("sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE")
@@ -52,6 +52,7 @@ def check_connection_mqtt():
                 time.sleep(1)
             if (mqtt_instance.connected and not publish_flag):
                 mqtt_instance.Publish("tunnel_up",json.dumps({"mac_address":mac_address}))
+                print("published")
                 time.sleep(2)
                 DHCPserverThread.start()
                 publish_flag=1
@@ -62,18 +63,26 @@ class edgeMqtt(Mqtt):
     def default_on_message(self,client, userdata, msg):
         message=msg.payload.decode('utf-8')
         message=json.loads(message)
+        print(message)
         if(message["mac_address"]==mac_address):
             tunnel_id=message["tunnel"]
             sqliteConnection = sqlite3.connect(SQLITE_PATH)
             cursor = sqliteConnection.cursor()
-            command="REPLACE INTO tunnel (id) VALUES (%s)"
-            value=(tunnel_id)
+            command="REPLACE INTO tunnel (id) VALUES (?)"
+            value=(int(tunnel_id),)
             cursor.execute(command,value)
             cursor.close()
             sqliteConnection.close()
         
 if __name__=="__main__":
-    mac_address=get_mac_address("etn0")
+    with open('constants.json', 'r') as file:
+        data = json.load(file)
+    EDGE_IP=data["EDGE_IP"]
+    SUBNET=data["SUBNET"]
+    CENTRAL_IP=data["BROKER_IP"]
+    DHCPserverAddress=data["DHCPserverAddress"]
+    SQLITE_PATH=data["SQLITE_PATH"]
+    mac_address=get_mac_address("eth0")
     NatWlan()
     connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
