@@ -72,9 +72,6 @@ def setRoute(end:bool):
                     return
                 else:
                     print("Fail to set route, try again")
-def rewrite_file(filename, new_content):
-    with open(filename, 'w') as file:
-        file.write(new_content)
         
 class updateMqtt(Mqtt):
     def __init__(self,sub_topic,node_name,central_ip,last_will,port=1883,anonymous=True,timeout=60):
