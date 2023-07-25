@@ -80,6 +80,7 @@ class updateMqtt(Mqtt):
     def default_on_message(self,client, userdata, msg):
         message=msg.payload.decode('utf-8')
         message=json.loads(message)
+        print(message)
         if message["instruction"]=="update":
             command = '''git fetch origin client
                          git reset --hard origin/client'''
