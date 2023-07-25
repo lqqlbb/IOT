@@ -51,6 +51,7 @@ if __name__ =="__main__":
     
     with open('constants.json', 'r') as file:
         data = json.load(file)
+    print(data)
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
     time_interval=data["TIME"]
