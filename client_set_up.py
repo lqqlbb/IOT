@@ -168,9 +168,10 @@ def check_connection():
                         print("Could not determine link status of eth0")
                 ip,id=start_connection(end)
                 global data
-                data["ID"]=id
                 data["IP"]=ip
-                data["TOPIC"]="node"+id
+                tunnel_id = ip.split(".")[1]
+                data["ID"]=f"T{tunnel_id}N{id}"
+                data["TOPIC"]=f"nodeT{tunnel_id}N{id}"
                 with open('constants.json', 'w') as file:
                     json.dump(data,file)
             except subprocess.CalledProcessError:
@@ -220,12 +221,4 @@ if __name__ =="__main__":
     connect_thread.start()
     mqtt_thread = threading.Thread(target=check_connection_mqtt)
     mqtt_thread.start()
-    # if(connection):
-    #     data["ID"]=id
-    #     data["IP"]=ip
-    #     data["TOPIC"]="node"+id
-    #     q=updateMqtt("update"+id,id+"_update",CENTRAL_IP,True)
-    #     q.Start()
-    #     while True:
-    #         time.sleep(2)
 
