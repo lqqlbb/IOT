@@ -9,6 +9,7 @@ import json
 import signal
 from mqtt import Mqtt
 import pexpect
+from datetime import datetime
 def isInSubnet(ip:str,subnet:str) -> bool:
     # print(ip)
     if(ip[0:6]==subnet[0:6]):
@@ -205,6 +206,10 @@ def check_connection_mqtt():
             #     # pdb.set_trace()
                 # print(mqtt_instance.connected)
                 mqtt_instance.Start()
+                mqtt_instance.Publish("time",json.dumps(
+         {
+            "ID":id,
+            "TIME":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),}))
             time.sleep(3)
         else:
             time.sleep(1)
