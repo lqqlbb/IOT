@@ -1,1 +1,1 @@
-{"SUBNET": "20.1.0.0", "EDGE_IP": "20.0.0.1", "BROKER_IP": "18.118.120.113", "ID": 3, "IP": "20.0.0.3", "TOPIC": "node3", "TIME": 13, "DHCPserverAddress": "/pi","SQLITE_PATH":""}
+{"SUBNET": "20.1.0.0", "EDGE_IP": "20.1.0.1", "BROKER_IP": "18.118.120.113", "ID": 3, "IP": "20.0.0.3", "TOPIC": "node3", "TIME": 13, "DHCPserverAddress": "/pi","SQLITE_PATH":""}
