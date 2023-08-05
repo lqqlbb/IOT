@@ -1,0 +1,1 @@
+sudo python3 client_set_up.py 
