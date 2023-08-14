@@ -206,6 +206,7 @@ def check_connection_mqtt():
             #     # pdb.set_trace()
                 # print(mqtt_instance.connected)
                 mqtt_instance.Start()
+                time.sleep(1)
                 mqtt_instance.Publish("time",json.dumps(
          {
             "ID":id,
