@@ -189,30 +189,35 @@ def start_connection(end:bool):
     setRoute(end) 
     return ip,id
 def check_connection_mqtt():
-    flag=0
-    while True:
-        # pdb.set_trace()
-        if(connection):
-            if flag==0:
-                    # pdb.set_trace()
-                    id=data["ID"]
-                    ip=data["IP"]
-                    mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
-                    # mqtt_instance.Start()
-                    flag=1
-            # 
-            # print(mqtt_instance.connected)
-            if not mqtt_instance.connected:
-            #     # pdb.set_trace()
+    try:
+        flag=0
+        while True:
+            # pdb.set_trace()
+            if(connection):
+                if flag==0:
+                        # pdb.set_trace()
+                        id=data["ID"]
+                        ip=data["IP"]
+                        mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
+                        # mqtt_instance.Start()
+                        flag=1
+                # 
                 # print(mqtt_instance.connected)
-                mqtt_instance.Start()
-                mqtt_instance.Publish("time",json.dumps(
-         {
-            "ID":id,
-            "TIME":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),}))
-            time.sleep(3)
-        else:
-            time.sleep(1)
+                if not mqtt_instance.connected:
+                #     # pdb.set_trace()
+                    # print(mqtt_instance.connected)
+                    mqtt_instance.Start()
+                    mqtt_instance.Publish("time",json.dumps(
+            {
+                "ID":id,
+                "TIME":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),}))
+                time.sleep(3)
+            else:
+                time.sleep(1)
+    except Exception as e:
+        print("Exception occurred:", str(e))
+        pid = os.getpid() 
+        os.kill(pid, signal.SIGTERM)
 if __name__ =="__main__":
     with open('constants.json', 'r') as file:
         data = json.load(file)

@@ -1,1 +1,7 @@
-sudo python3 client_set_up.py 
+#!/bin/bash
+
+# Change to the directory containing edge.py
+cd /home/pi/IOT
+
+# Run the Python script
+python edge.py

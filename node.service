@@ -1,0 +1,14 @@
+[Unit]
+Description=node
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/pi/IOT/edgeStart.sh
+WorkingDirectory=/home/pi/IOT
+User=pi
+Group=pi
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=default.target
