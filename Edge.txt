@@ -1,3 +1,11 @@
+ Edge
+#The seting up procedure for edge.
+#It can be summarized as several steps:
+1.Download the DHCPserver code.
+2.Run install.sh
+3.Setup DHCP database(sqlite method)
+Open a terminal and run `sqlite3 dhcp.sqlite3`
+Copy and paste the contents of sqliteSetup.txt into the prompt.
 CREATE TABLE subnets (
     subnet TEXT NOT NULL, -- A human-readable subnet-identifier, typically a CIDR mask.
     serial INTEGER NOT NULL DEFAULT 0, -- A means of allowing a subnet to be reused, just in case you have two 192.168.1.0/24s.
@@ -22,9 +30,35 @@ CREATE TABLE maps (
     FOREIGN KEY (subnet, serial) REFERENCES subnets (subnet, serial)
 );
 Create table tunnel(
-id INTEGER, -- The tunnel id)
+id INTEGER)
 ;
 -- Case-insensitive MAC-lookups may be handled in-database using either of the following methods:
 --  - Put "COLLATE NOCASE" in the column-definition in maps:mac
 --  - Include the following index
 CREATE INDEX case_insensitive_macs ON maps (mac COLLATE NOCASE);
+INSERT INTO subnets (
+                subnet,
+                serial,
+                lease_time,
+                gateway,
+                subnet_mask,
+                broadcast_address,
+                ntp_servers,
+                domain_name_servers,
+                domain_name
+            ) VALUES (
+                '20.1.0.0/16',
+                0,
+                14400,
+                '20.1.0.1',
+                '255.255.0.0',
+                '20.1.255.255',
+                NULL,
+                NULL,
+                NULL
+            );
+            
+          
+4.Set up conf.py
+Copy 'conf/conf.py.sample' to 'conf/conf.py'.
+SQLITE_FILE = '/home/you/sqlite-file-you-created'

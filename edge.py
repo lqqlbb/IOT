@@ -6,6 +6,8 @@ import subprocess
 import time
 import json
 import random
+import sys
+import signal
 def DHCPserver():
         if(connection):
             os.system("sudo ifconfig eth0 "+EDGE_IP)
@@ -32,33 +34,38 @@ def get_mac_address(interface):
     except FileNotFoundError:
         return None
 def check_connection_mqtt():
-    flag=0
-    publish_flag=0
-    while True:
-        # pdb.set_trace()
-        if(connection):
-            if flag==0:
-                    # pdb.set_trace()
-                    mqtt_instance=edgeMqtt("tunnel_down",mac_address+"_update",CENTRAL_IP,True)
-                    # mqtt_instance.Start()
-                    flag=1
-            # 
-            # print(mqtt_instance.connected)
-            if not mqtt_instance.connected:
-            #     # pdb.set_trace()
+    try:
+        flag=0
+        publish_flag=0
+        while True:
+            # pdb.set_trace()
+            if(connection):
+                if flag==0:
+                        # pdb.set_trace()
+                        mqtt_instance=edgeMqtt("tunnel_down",mac_address+"_update",CENTRAL_IP,True)
+                        # mqtt_instance.Start()
+                        flag=1
+                # 
                 # print(mqtt_instance.connected)
-                mqtt_instance.Start()
-                publish_flag=0
+                if not mqtt_instance.connected:
+                #     # pdb.set_trace()
+                    # print(mqtt_instance.connected)
+                    mqtt_instance.Start()
+                    publish_flag=0
+                    time.sleep(1)
+                if (mqtt_instance.connected and not publish_flag):
+                    mqtt_instance.Publish("tunnel_up",json.dumps({"mac_address":mac_address}))
+                    print("published")
+                    time.sleep(2)
+                    DHCPserverThread.start()
+                    publish_flag=1
+                time.sleep(3)
+            else:
                 time.sleep(1)
-            if (mqtt_instance.connected and not publish_flag):
-                mqtt_instance.Publish("tunnel_up",json.dumps({"mac_address":mac_address}))
-                print("published")
-                time.sleep(2)
-                DHCPserverThread.start()
-                publish_flag=1
-            time.sleep(3)
-        else:
-            time.sleep(1)
+    except Exception as e:
+        print("Exception occurred:", str(e))
+        pid = os.getpid() 
+        os.kill(pid, signal.SIGTERM)
 class edgeMqtt(Mqtt):
     def default_on_message(self,client, userdata, msg):
         message=msg.payload.decode('utf-8')
