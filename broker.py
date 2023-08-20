@@ -80,7 +80,8 @@ class brokerMqtt(Mqtt):
                 print(max_id)
                 cursor.execute(edge_query,edge_paras)
                 self.Publish("tunnel_down",json.dumps({"mac_address":message["mac_address"],"tunnel":max_id}))
-
+        elif(msg.topic=="feedback"):
+            print(message)
         else:
             query = " select * from detection  where id =%s;"
             params = (msg.topic[4:],)  # set select condition
@@ -210,7 +211,7 @@ def change_constants(mode:str,id:str):
     elif mode[0]=="r":
         p.Publish('update'+id,json.dumps({"instruction":"start"}))
     elif mode[:2]=="sh":
-        p.Publish('update'+id,json.dumps({"instruction":"ssh"}))
+        p.Publish('update'+id,json.dumps({"instruction":"ssh","password":"aaa"}))
         print("published")
     elif mode[:2]=="ss":
         p.Publish('update'+id,json.dumps({"instruction":"stopssh"}))
@@ -247,14 +248,17 @@ def print_active_threads():
     threads = threading.enumerate()
     for thread in threads:
         print(f"Threadname: {thread.name}, ThreadID: {thread.ident}")
+def getConfig(client,id:str)->str:
+    client.Publish("down"+id,json.dumps({"instruction":"get_config"}))
+
 tunnel_number=1
 node_number=2
 # print(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(2,2+node_number)])
-id=brokerMqtt(["nodes","tunnel_up"],12,"18.216.80.237",False)
+id=brokerMqtt(["nodes","tunnel_up"],12,"18.221.129.24",False)
 id.Start()
-p1=brokerMqtt(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(2,2+node_number)],10,"18.216.80.237",False)
+p1=brokerMqtt(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(2,2+node_number)],10,"18.221.129.24",False)
 p1.Start()
-p2=brokerMqtt(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(4,4+node_number)],11,"18.216.80.237",False)
+p2=brokerMqtt(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(4,4+node_number)],11,"18.221.129.24",False)
 p2.Start()
 # q=alertMqtt(["node"+"T"+str(i)+"N"+str(m) for i in range(1,1+tunnel_number) for m in range(2,2+node_number)],11,"18.216.80.237",False)
 # q.Start()
