@@ -10,6 +10,8 @@ import sys
 import signal
 def DHCPserver():
         if(connection):
+            EDGE_IP=data["EDGE_IP"]
+            SUBNET=data["SUBNET"]
             os.system("sudo ifconfig eth0 "+EDGE_IP)
             os.system("sudo ip route add "+ SUBNET+"/16 via "+EDGE_IP)
             os.system(f"sudo python {DHCPserverAddress}")
@@ -56,7 +58,7 @@ def check_connection_mqtt():
                 if (mqtt_instance.connected and not publish_flag):
                     mqtt_instance.Publish("tunnel_up",json.dumps({"mac_address":mac_address}))
                     print("published")
-                    time.sleep(2)
+                    time.sleep(5)
                     DHCPserverThread.start()
                     publish_flag=1
                 time.sleep(3)
@@ -74,18 +76,60 @@ class edgeMqtt(Mqtt):
         if(message["mac_address"]==mac_address):
             tunnel_id=message["tunnel"]
             sqliteConnection = sqlite3.connect(SQLITE_PATH)
+            print(SQLITE_PATH)
+            time.sleep(3)
             cursor = sqliteConnection.cursor()
-            command="REPLACE INTO tunnel (id) VALUES (?)"
+            delete_command = '''DELETE FROM subnets'''
+            cursor.execute(delete_command)  
+            delete_command = '''DELETE FROM tunnel'''
+            cursor.execute(delete_command)  
+            command="INSERT OR REPLACE INTO tunnel (id) VALUES (?)"
             value=(int(tunnel_id),)
             cursor.execute(command,value)
+            command='''INSERT OR REPLACE INTO subnets (
+                subnet,
+                serial,
+                lease_time,
+                gateway,
+                subnet_mask,
+                broadcast_address,
+                ntp_servers,
+                domain_name_servers,
+                domain_name
+            ) VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )'''
+            value=(
+                f"20.{tunnel_id}.0.0/16",
+                0,
+                14400,
+                f"20.{tunnel_id}.0.1",
+                '255.255.0.0',
+                f"20.{tunnel_id}.255.255",
+                None,
+                None,
+                None)
+            cursor.execute(command,value)
+            global data
+            data["SUBNET"]=f"20.{tunnel_id}.0.0"
+            data["EDGE_IP"]=f"20.{tunnel_id}.0.1"
+            with open('constants.json', 'w') as file:
+                    json.dump(data,file)
             cursor.close()
+            sqliteConnection.commit()
             sqliteConnection.close()
         
 if __name__=="__main__":
     with open('constants.json', 'r') as file:
         data = json.load(file)
-    EDGE_IP=data["EDGE_IP"]
-    SUBNET=data["SUBNET"]
     CENTRAL_IP=data["BROKER_IP"]
     DHCPserverAddress=data["DHCPserverAddress"]
     SQLITE_PATH=data["SQLITE_PATH"]
