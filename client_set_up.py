@@ -92,9 +92,9 @@ class updateMqtt(Mqtt):
                 print("An error occurred while updating.")
                 print("Error message:")
                 print(result.stderr)
-                self.Publish("update"+data["ID"],json.dumps(
+                self.Publish("feedback",json.dumps(
          {
-            "update_error":result.stderr,
+            "update_error":result.stderr,"id":data["ID"]
             }))
         elif message["instruction"]=="backtrace":
             command = "git reset --hard "+message["version"]
@@ -105,25 +105,27 @@ class updateMqtt(Mqtt):
                 print("An error occurred while reseting.")
                 print("Error message:")
                 print(result.stderr)
-                self.Publish("update"+data["ID"],json.dumps(
+                self.Publish("feedback",json.dumps(
          {
-            "reset_error":result.stderr,
+            "reset_error":result.stderr,"id":data["ID"]
             }))
         elif message["instruction"]=="start":
             command = "python client_mqtt.py"
             result = subprocess.Popen(command, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         elif message["instruction"]=="ssh":
-            self.startssh()
+            self.startssh(message["password"])
         elif message["instruction"]=="stopssh":
             self.endssh()
-    def startssh(self):
-        remote_host = 'ubuntu@3.140.201.235'
+        elif message["instruction"]=="get_config":
+            self.get_config()
+    def startssh(self,password):
+        remote_host = data["BROKER_ID"]+"@"+data["BROKER_IP"]
         remote_port = 2208
         local_port = 22
         ssh_command = f'ssh -fN -R {remote_port}:localhost:{local_port} {remote_host}'
         self.sshprocess = pexpect.spawn(ssh_command)
-        self.sshprocess.expect('ubuntu@3.140.201.235\'s password:')
-        self.sshprocess.sendline('aaa')
+        self.sshprocess.expect(remote_host+'\'s password:')
+        self.sshprocess.sendline(password)
         
     def endssh(self):
         try:
@@ -133,9 +135,24 @@ class updateMqtt(Mqtt):
             for i in output[0:-2]:
                 words = i.split()
                 os.kill(int(words[1]), signal.SIGTERM)
-            print("success terminal ssh")
+            self.Publish("feedback",json.dumps(
+         {
+            "feedback":"success terminal ssh","id":data["ID"]
+            }))
         except:
-            print("fail to shup down ssh")
+            self.Publish("feedback",json.dumps(
+         {
+            "feedback":"fail to shup down ssh","id":data["ID"]
+            }))
+    def get_config(self):
+        try:
+            self.Publish("nodes",json.dumps(data))
+        except:
+            self.Publish("feedback",json.dumps(
+         {
+            "feedback":"fail to publish config","id":data["ID"]
+            }))
+
 
 
 def check_connection():

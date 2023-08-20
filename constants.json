@@ -1,1 +1,1 @@
-{"SUBNET": "20.1.0.0", "EDGE_IP": "20.1.0.1", "BROKER_IP": "18.216.80.237", "ID": "T1N3", "IP": "20.0.0.3", "TOPIC": "nodeT1N3", "TIME": 15, "DHCPserverAddress": "/pi","DETECTION":["NO2","CO2"]}
+{"SUBNET": "20.1.0.0", "EDGE_IP": "20.1.0.1", "BROKER_IP": "18.216.80.237","BROKER_ID": "ubuntu", "ID": "T1N3", "IP": "20.0.0.3", "TOPIC": "nodeT1N3", "TIME": 15, "DHCPserverAddress": "/pi","DETECTION":["NO2","CO2"]}
