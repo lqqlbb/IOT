@@ -207,22 +207,24 @@ def change_constants(mode:str,id:str):
         database="test")
     print(mode[:2])
     if mode[0]=="u":
-        p.Publish('update'+id,json.dumps({"instruction":"update"}))
+        p1.Publish('update'+id,json.dumps({"instruction":"update"}))
     elif mode[0]=="r":
-        p.Publish('update'+id,json.dumps({"instruction":"start"}))
+        p1.Publish('update'+id,json.dumps({"instruction":"start"}))
     elif mode[:2]=="sh":
-        p.Publish('update'+id,json.dumps({"instruction":"ssh","password":"aaa"}))
+        p1.Publish('update'+id,json.dumps({"instruction":"ssh","password":"aaa"}))
         print("published")
     elif mode[:2]=="ss":
-        p.Publish('update'+id,json.dumps({"instruction":"stopssh"}))
+        p1.Publish('update'+id,json.dumps({"instruction":"stopssh"}))
         # update_query = "UPDATE nodes SET time=%s WHERE id = %s"
         # update_params = (result-1,id)  # set data to update
     elif mode[0]=="b":
-        p.Publish('update'+id,json.dumps({"instruction":"backtrace","version":"v1.0"}))
+        p1.Publish('update'+id,json.dumps({"instruction":"backtrace","version":"v1.0"}))
     elif mode[0]=="s":
-        p.Publish('down'+id,json.dumps({"instruction":"stop"}))
+        p1.Publish('down'+id,json.dumps({"instruction":"stop"}))
         # update_query = "UPDATE nodes SET time=%s WHERE id = %s"
         # update_params = (result-1,id)  # set data to update
+    elif mode[0]=="g":
+        getConfig(p1,id)
     else:
         cursor=cn.cursor()
         query = "SELECT time FROM nodes WHERE id = %s"
@@ -231,12 +233,12 @@ def change_constants(mode:str,id:str):
         result = cursor.fetchall()[0][0]
         if mode[0]=="p":
             print(result+1)
-            p.Publish('down'+id,json.dumps({"instruction":"change_speed","TIME":result+1}))
+            p1.Publish('down'+id,json.dumps({"instruction":"change_speed","TIME":result+1}))
             update_query = "UPDATE nodes SET time=%s WHERE id = %s"
             update_params = (result+1,id)  # set data to update
         elif mode[0]=="m":
             print(result-1)
-            p.Publish('down'+id,json.dumps({"instruction":"change_speed","TIME":result-1}))
+            p1.Publish('down'+id,json.dumps({"instruction":"change_speed","TIME":result-1}))
             update_query = "UPDATE nodes SET time=%s WHERE id = %s"
             update_params = (result-1,id)  # set data to update
         
@@ -273,8 +275,10 @@ while True:
     if 'user_input' in globals():
         print("input 'q' to exit,'p' to plus 1s to time interval,'m' to minors 1s: ",user_input)
         if user_input.lower() == "q":
-            p.disconnectTOSql()
-            q.disconnectTOSql()
+            p1.disconnectTOSql()
+            p2.disconnectTOSql()
+            id.disconnectTOSql()
+            # q1.disconnectTOSql()
             print("Bye")
             running=False
             del user_input
@@ -311,8 +315,10 @@ while True:
             change_constants("sh1",node1_id)
         elif user_input.lower() == "ss1":
             change_constants("ss1",node1_id)
-        
-            
+        elif user_input.lower() == "g1":
+            change_constants("g1",node1_id)
+        elif user_input.lower() == "g2":
+            change_constants("g2",node2_id)
         del user_input
 
 
