@@ -61,7 +61,7 @@ class Test(unittest.TestCase):
         sshprocess = pexpect.spawn(ssh_command)
         fout = open('mylog.txt',mode='wb')
         sshprocess.logfile = fout
-        sshprocess.expect(f'{remote_host}@localhost'+'\'s password:')
+        sshprocess.expect(f'{remote_host}@localhost'+'\'s password:',timeout=10)
         sshprocess.sendline(password)
         sshprocess.expect("\$")    # 匹配命令提示符
         sshprocess.sendline("ifconfig")
@@ -84,10 +84,16 @@ class Test(unittest.TestCase):
             params = (self.id,)  # set select condition
             cursor.execute(query, params)
             result=cursor.fetchall()
+            self.q.Publish('update'+self.id,json.dumps({"instruction":"stopssh"}))
+            command = "ss -lnt | grep ':2208\b'"
+            port_usage = subprocess.run(command, shell=True, capture_output=True, text=True)
             self.assertEqual(inet_value, result[0][0])
+            self.assertEqual("", port_usage.stdout)
         else:
             print("No match found")
 
+    def test_reverse_close(self):
+        pass
         # print(output_after_sendline)
 if __name__ == '__main__':
     unittest.main()
