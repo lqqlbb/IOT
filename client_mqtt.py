@@ -44,9 +44,36 @@ def publish(client,topic:str,file:str):
                     print(time_interval)
                     time.sleep(time_interval)
         except Exception as e:
-                err_queue.put(e)
-                print("fail to publish "+file+" to "+topic)
-                return
+               client.close_connection()
+               pid = os.getpid() 
+               os.kill(pid, signal.SIGTERM)
+def check_connection_mqtt():
+    try:
+        instance_flag=0
+        send_flag=0
+        while True:
+            # pdb.set_trace()
+                if instance_flag==0:
+                        # pdb.set_trace()
+                        id=data["ID"]
+                        ip=data["IP"]
+                        mqtt_instance=clientMqtt(["down"+str(id)],id,BROKER_IP,True)
+                        instance_flag=1
+                # 
+                # print(mqtt_instance.connected)
+                if not mqtt_instance.connected:
+                #     # pdb.set_trace()
+                    mqtt_instance.Start()
+                else:
+                     if send_flag==0:
+                        pubThread=threading.Thread(target=publish,args=(mqtt_instance,data["TOPIC"],"austin_weather.csv"))
+                        pubThread.start()
+                        send_flag=1
+                time.sleep(3)
+    except Exception as e:
+        print("Exception occurred:", str(e))
+        pid = os.getpid() 
+        os.kill(pid, signal.SIGTERM)
 if __name__ =="__main__":
     
     with open('constants.json', 'r') as file:
@@ -55,21 +82,9 @@ if __name__ =="__main__":
     BROKER_IP=data["BROKER_IP"]
     id=data["ID"]
     time_interval=data["TIME"]
-    p=clientMqtt(["down"+str(id)],id,BROKER_IP,True)
-    p.Start()
-    time.sleep(5)
-    p.Publish("nodes",json.dumps(
-         {
-            "ID":id,
-            "IP":data["IP"],
-            "TOPIC":data["TOPIC"],
-            "TIME":time_interval,
-            "DETECTION":data["DETECTION"]}))
-    err_queue = queue.Queue()
-    pubThread=threading.Thread(target=publish,args=(p,data["TOPIC"],"austin_weather.csv"))
-    pubThread.start()
-    while True:
-        while not err_queue.empty(): 
-            error = err_queue.get()
-            print('Error:', error)
-        time.sleep(2)
+    mqtt_thread = threading.Thread(target=check_connection_mqtt)
+    mqtt_thread.start()
+    # p.Publish("nodes",json.dumps(
+    #      {"Status":data["DETECTION"]}))
+    
+

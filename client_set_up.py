@@ -78,6 +78,7 @@ class updateMqtt(Mqtt):
     def __init__(self,sub_topic,node_name,central_ip,last_will,port=1883,anonymous=True,timeout=60):
         super().__init__(sub_topic,node_name,central_ip,last_will)
         self.sshprocess = None
+
     def default_on_message(self,client, userdata, msg):
         message=msg.payload.decode('utf-8')
         message=json.loads(message)
@@ -110,8 +111,10 @@ class updateMqtt(Mqtt):
             "reset_error":result.stderr,"id":data["ID"]
             }))
         elif message["instruction"]=="start":
-            command = "python client_mqtt.py"
-            result = subprocess.Popen(command, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            start_command ="python client_mqtt.py"
+            thread = threading.Thread(target=self.run_command,args=(start_command,))
+            thread.start()
+            print("Start sending, Main program continues...")
         elif message["instruction"]=="ssh":
             self.startssh(message["password"])
         elif message["instruction"]=="stopssh":
@@ -132,8 +135,10 @@ class updateMqtt(Mqtt):
             command = "ps -ef | grep 'ssh -fN -R'"
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
             output = result.stdout.strip().splitlines()
+            # print(output)
             for i in output[0:-2]:
                 words = i.split()
+                # print(int(words[1]))
                 os.kill(int(words[1]), signal.SIGTERM)
             self.Publish("feedback",json.dumps(
          {
@@ -152,6 +157,11 @@ class updateMqtt(Mqtt):
          {
             "feedback":"fail to publish config","id":data["ID"]
             }))
+    def run_command(self,command):
+        result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout_output, stderr_output = result.communicate()
+        print(stdout_output, stderr_output)
+
 
 
 
@@ -216,18 +226,24 @@ def check_connection_mqtt():
                         id=data["ID"]
                         ip=data["IP"]
                         mqtt_instance=updateMqtt("update"+str(id),str(id)+"_update",CENTRAL_IP,True)
-                        # mqtt_instance.Start()
                         flag=1
                 # 
                 # print(mqtt_instance.connected)
                 if not mqtt_instance.connected:
                 #     # pdb.set_trace()
-                    # print(mqtt_instance.connected)
                     mqtt_instance.Start()
+                    time.sleep(2)
+                    mqtt_instance.Publish("nodes",json.dumps(
+                                                            {
+                                                            "ID":id,
+                                                            "IP":data["IP"],
+                                                            "TOPIC":data["TOPIC"],
+                                                            "TIME":data["TIME"],
+                                                            "DETECTION":data["DETECTION"]}))
                     mqtt_instance.Publish("time",json.dumps(
-            {
-                "ID":id,
-                "TIME":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),}))
+                                                            {
+                                                            "ID":id,
+                                                            "TIME":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),}))
                 time.sleep(3)
             else:
                 time.sleep(1)
@@ -241,7 +257,6 @@ if __name__ =="__main__":
     EDGE_IP=data["EDGE_IP"]
     SUBNET=data["SUBNET"]
     CENTRAL_IP=data["BROKER_IP"]
-    print("upgraded")
     connect_thread = threading.Thread(target=check_connection)
     connect_thread.start()
     mqtt_thread = threading.Thread(target=check_connection_mqtt)
