@@ -67,10 +67,7 @@ class Mqtt:
             self.connected=True
             # pdb.set_trace()
             print("connection set up")
-            self.Publish("lastwill",json.dumps(
-                                                            {
-                                                            "ID":self.node_name,
-                                                            , "status": "Connected"}))
+            self.Publish("lastwill",json.dumps({"ID":self.node_name,"status": "Connected"}))
         else:
             raise Exception("Failed to connect mqtt server with code"+str(rc))
     def default_on_message(self,client, userdata, msg):
