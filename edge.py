@@ -44,7 +44,7 @@ def check_connection_mqtt():
             if(connection):
                 if flag==0:
                         # pdb.set_trace()
-                        mqtt_instance=edgeMqtt("tunnel_down",mac_address+"_update",CENTRAL_IP,True)
+                        mqtt_instance=edgeMqtt("tunnel_down",mac_address+"_edge",CENTRAL_IP,True)
                         # mqtt_instance.Start()
                         flag=1
                 # 
