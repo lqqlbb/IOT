@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import pdb
 import random
+import json
 class Mqtt:
     '''
         mqtt
@@ -31,7 +32,7 @@ class Mqtt:
         self.client.on_message=self.default_on_message
         if self.last_will:
             last_will_topic = "lastwill"
-            last_will_message = "Client"+self.node_name+ "disconnected"
+            last_will_message = json.dumps({"ID":self.node_name,"status":"Disconnected"})
             self.client.will_set(last_will_topic, last_will_message, qos=1)
         # pdb.set_trace()
         self.client.connect(self.broker_ip, self.broker_port, self.timeout)     #start to connect
