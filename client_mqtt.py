@@ -57,7 +57,7 @@ def check_connection_mqtt():
                         # pdb.set_trace()
                         id=data["ID"]
                         ip=data["IP"]
-                        mqtt_instance=clientMqtt(["down"+str(id)],id,BROKER_IP,True)
+                        mqtt_instance=clientMqtt(["down"+str(id)],id,BROKER_IP,False)
                         instance_flag=1
                 # 
                 # print(mqtt_instance.connected)
