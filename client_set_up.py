@@ -163,6 +163,10 @@ class updateMqtt(Mqtt):
         result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         stdout_output, stderr_output = result.communicate()
         print(stdout_output, stderr_output)
+        self.Publish("feedback",json.dumps(
+         {
+            "feedback":"publish terminated","id":data["ID"],"stdout":stdout_output,"stderr":stderr_output
+            }))
 
 
 
