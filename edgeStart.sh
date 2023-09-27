@@ -4,4 +4,4 @@
 cd /home/pi/IOT
 
 # Run the Python script
-python edge.py
+sudo python edge.py
